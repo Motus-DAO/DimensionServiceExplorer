@@ -1,0 +1,1811 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400;500;600;700;800;900&family=Jura:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Prevent white flash during development */
+html, body {
+  background-color: #0B101A;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Ensure no white background during component re-renders */
+body > div {
+  background-color: #0B101A;
+}
+
+/* Prevent layout shifts and white flashing */
+* {
+  box-sizing: border-box;
+}
+
+/* Prevent automatic scrolling when typing */
+.chat-section-container {
+  scroll-behavior: auto;
+  overflow: hidden;
+}
+
+.chat-section-container * {
+  scroll-behavior: auto;
+}
+
+/* Prevent automatic scrolling in chat messages */
+.messages-container {
+  scroll-behavior: auto;
+}
+
+.messages-container * {
+  scroll-behavior: auto;
+}
+
+/* Prevent page scrolling when typing */
+body {
+  scroll-behavior: auto;
+  overflow-x: hidden;
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* WebGL canvas optimization */
+canvas {
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* PsyChat Futuristic Design System */
+:root {
+  --color-bg: #0B101A;
+  --color-primary: #00E5FF;
+  --color-accent: #E144FF;
+  --color-secondary: #9D68FF;
+  --color-surface: rgba(255,255,255,0.06);
+  --color-text: rgba(255,255,255,0.9);
+  --blur: 20px;
+  --radius: 12px;
+  
+  /* Typography System */
+  --font-display: 'Orbitron', monospace;
+  --font-heading: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+  --font-special: 'Jura', sans-serif;
+  
+  /* Z-Index System */
+  --z-background-deep: -20;
+  --z-background-mid: -10;
+  --z-background-overlay: -5;
+  --z-content: 0;
+  --z-content-elevated: 10;
+  --z-modal: 50;
+  --z-loader: 100;
+  
+  /* Holographic Glass System */
+  --bg-dark: #05070D;
+  --bg-panel: rgba(255,255,255,0.05);
+  --cyan: #00E5FF;
+  --lavender: #E144FF;
+  --silver: #A7B4C6;
+  --neon-blue: rgba(0,229,255,0.35);
+  --neon-purple: rgba(225,68,255,0.25);
+  --holo-gradient: linear-gradient(135deg, var(--cyan), var(--lavender), var(--silver));
+  
+  /* Enhanced Holographic System */
+  --electric-cyan: #00FFFF;
+  --vibrant-magenta: #FF00FF;
+  --deep-black: #000000;
+  --translucent-white: rgba(255, 255, 255, 0.15);
+  
+  /* Depth-based opacity layers */
+  --opacity-bg: 0.05;
+  --opacity-far: 0.15;
+  --opacity-mid: 0.20;
+  --opacity-near: 0.25;
+  --opacity-main: 0.30;
+}
+
+/* Terminal Loader Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes holo-glow {
+  0% { opacity: 0.5; transform: translateX(-10%); }
+  50% { opacity: 1; transform: translateX(10%); }
+  100% { opacity: 0.5; transform: translateX(-10%); }
+}
+
+@keyframes holographic-scan {
+  0% { transform: translateY(-100%) rotateX(0deg); opacity: 0; }
+  50% { transform: translateY(0%) rotateX(0deg); opacity: 1; }
+  100% { transform: translateY(100%) rotateX(0deg); opacity: 0; }
+}
+
+@keyframes circuit-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+@keyframes neon-flicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  2% { opacity: 0.8; filter: brightness(1.2); }
+  4% { opacity: 1; filter: brightness(0.9); }
+  6% { opacity: 0.9; filter: brightness(1.1); }
+  8% { opacity: 1; filter: brightness(1); }
+}
+
+@keyframes depth-shift {
+  0% { transform: translateZ(0px) rotateX(0deg); }
+  50% { transform: translateZ(2px) rotateX(1deg); }
+  100% { transform: translateZ(0px) rotateX(0deg); }
+}
+
+@keyframes light-sweep {
+  0% { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+  50% { transform: translateX(0%) skewX(0deg); opacity: 1; }
+  100% { transform: translateX(100%) skewX(15deg); opacity: 0; }
+}
+
+@keyframes float-panel {
+  0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+  25% { transform: translateY(-8px) rotateZ(0.5deg); }
+  50% { transform: translateY(-4px) rotateZ(0deg); }
+  75% { transform: translateY(-12px) rotateZ(-0.5deg); }
+}
+
+@keyframes parallax-drift {
+  0%, 100% { transform: translateX(0px) translateY(0px); }
+  33% { transform: translateX(4px) translateY(-2px); }
+  66% { transform: translateX(-2px) translateY(3px); }
+}
+
+@keyframes motion-blur-streak {
+  0% { transform: translateX(-200%) skewX(-20deg); opacity: 0; }
+  10% { transform: translateX(-100%) skewX(-15deg); opacity: 0.8; }
+  50% { transform: translateX(0%) skewX(0deg); opacity: 1; }
+  90% { transform: translateX(100%) skewX(15deg); opacity: 0.8; }
+  100% { transform: translateX(200%) skewX(20deg); opacity: 0; }
+}
+
+@keyframes refraction-shift {
+  0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+  25% { filter: hue-rotate(10deg) brightness(1.1); }
+  50% { filter: hue-rotate(0deg) brightness(1.2); }
+  75% { filter: hue-rotate(-10deg) brightness(1.1); }
+}
+
+/* Advanced Holographic Animations */
+@keyframes edge-glow-pulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 20px rgba(0, 255, 255, 0.3),
+      0 0 40px rgba(0, 255, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% { 
+    box-shadow: 
+      0 0 30px rgba(0, 255, 255, 0.5),
+      0 0 60px rgba(0, 255, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes gradient-rotation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes depth-glow {
+  0%, 100% { 
+    filter: brightness(1) drop-shadow(0 0 10px rgba(0, 255, 255, 0.3));
+  }
+  50% { 
+    filter: brightness(1.2) drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+  }
+}
+
+@keyframes holographic-scan-line {
+  0% { 
+    transform: translateY(-100%) skewX(-15deg); 
+    opacity: 0; 
+  }
+  10% { 
+    transform: translateY(-50%) skewX(-10deg); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: translateY(0%) skewX(0deg); 
+    opacity: 1; 
+  }
+  90% { 
+    transform: translateY(50%) skewX(10deg); 
+    opacity: 0.8; 
+  }
+  100% { 
+    transform: translateY(100%) skewX(15deg); 
+    opacity: 0; 
+  }
+}
+
+@keyframes circuit-flow {
+  0% { 
+    stroke-dashoffset: 100; 
+    opacity: 0.3; 
+  }
+  50% { 
+    stroke-dashoffset: 0; 
+    opacity: 1; 
+  }
+  100% { 
+    stroke-dashoffset: -100; 
+    opacity: 0.3; 
+  }
+}
+
+@keyframes multi-layer-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 10px rgba(0, 255, 255, 0.2),
+      0 0 20px rgba(255, 0, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  25% {
+    box-shadow: 
+      0 0 15px rgba(0, 255, 255, 0.3),
+      0 0 30px rgba(255, 0, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(0, 255, 255, 0.4),
+      0 0 40px rgba(255, 0, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  75% {
+    box-shadow: 
+      0 0 15px rgba(0, 255, 255, 0.3),
+      0 0 30px rgba(255, 0, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Holographic Glass Utilities */
+.holo-scan {
+  animation: holographic-scan 4s ease-in-out infinite;
+}
+
+.circuit-pulse {
+  animation: circuit-pulse 3s ease-in-out infinite;
+}
+
+.neon-flicker {
+  animation: neon-flicker 0.1s ease-in-out infinite;
+}
+
+.depth-shift {
+  animation: depth-shift 6s ease-in-out infinite;
+}
+
+.light-sweep {
+  animation: light-sweep 8s linear infinite;
+}
+
+.float-panel {
+  animation: float-panel 6s ease-in-out infinite;
+}
+
+.parallax-drift {
+  animation: parallax-drift 8s ease-in-out infinite;
+}
+
+.motion-blur-streak {
+  animation: motion-blur-streak 4s linear infinite;
+}
+
+.refraction-shift {
+  animation: refraction-shift 3s ease-in-out infinite;
+}
+
+/* Advanced Holographic Utilities */
+.edge-glow-pulse {
+  animation: edge-glow-pulse 4s ease-in-out infinite;
+}
+
+.gradient-rotation {
+  background: linear-gradient(45deg, #00FFFF, #FF00FF, #9D68FF, #00FFFF);
+  background-size: 400% 400%;
+  animation: gradient-rotation 3s linear infinite;
+}
+
+.depth-glow {
+  animation: depth-glow 2s ease-in-out infinite;
+}
+
+.holographic-scan-line {
+  animation: holographic-scan-line 6s linear infinite;
+}
+
+.circuit-flow {
+  animation: circuit-flow 3s ease-in-out infinite;
+}
+
+.multi-layer-glow {
+  animation: multi-layer-glow 5s ease-in-out infinite;
+}
+
+/* Depth-based opacity utilities */
+.opacity-bg { opacity: var(--opacity-bg); }
+.opacity-far { opacity: var(--opacity-far); }
+.opacity-mid { opacity: var(--opacity-mid); }
+.opacity-near { opacity: var(--opacity-near); }
+.opacity-main { opacity: var(--opacity-main); }
+
+/* Liquid Glass Effect */
+.liquid-glass {
+  background: transparent;
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 255, 255, 0.03) 0%, 
+    rgba(255, 0, 255, 0.02) 25%,
+    rgba(255, 255, 255, 0.01) 50%,
+    rgba(255, 0, 255, 0.02) 75%,
+    rgba(0, 255, 255, 0.03) 100%);
+  border-radius: inherit;
+  animation: liquid-shift 8s ease-in-out infinite;
+}
+
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.05) 50%, 
+    transparent 70%);
+  border-radius: inherit;
+  animation: liquid-highlight 6s ease-in-out infinite;
+}
+
+@keyframes liquid-shift {
+  0%, 100% { 
+    background: linear-gradient(135deg, 
+      rgba(0, 255, 255, 0.03) 0%, 
+      rgba(255, 0, 255, 0.02) 25%,
+      rgba(255, 255, 255, 0.01) 50%,
+      rgba(255, 0, 255, 0.02) 75%,
+      rgba(0, 255, 255, 0.03) 100%);
+  }
+  25% { 
+    background: linear-gradient(135deg, 
+      rgba(255, 0, 255, 0.03) 0%, 
+      rgba(0, 255, 255, 0.02) 25%,
+      rgba(255, 255, 255, 0.01) 50%,
+      rgba(0, 255, 255, 0.02) 75%,
+      rgba(255, 0, 255, 0.03) 100%);
+  }
+  50% { 
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.03) 0%, 
+      rgba(0, 255, 255, 0.02) 25%,
+      rgba(255, 0, 255, 0.01) 50%,
+      rgba(0, 255, 255, 0.02) 75%,
+      rgba(255, 255, 255, 0.03) 100%);
+  }
+  75% { 
+    background: linear-gradient(135deg, 
+      rgba(0, 255, 255, 0.03) 0%, 
+      rgba(255, 255, 255, 0.02) 25%,
+      rgba(255, 0, 255, 0.01) 50%,
+      rgba(255, 255, 255, 0.02) 75%,
+      rgba(0, 255, 255, 0.03) 100%);
+  }
+}
+
+@keyframes liquid-highlight {
+  0%, 100% { 
+    transform: translateX(-100%) rotate(45deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: translateX(100%) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+/* Enhanced glass morphism */
+.holo-glass-enhanced {
+  background: transparent;
+  backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 0 40px rgba(0, 255, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Layered Lighting System */
+.layered-lighting {
+  position: relative;
+}
+
+
+.layered-lighting::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(45deg, 
+    rgba(0, 255, 255, 0.4) 0%, 
+    rgba(255, 0, 255, 0.3) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 0, 255, 0.3) 75%,
+    rgba(0, 255, 255, 0.4) 100%);
+  border-radius: inherit;
+  z-index: -1;
+  animation: gradient-rotation 4s linear infinite;
+  filter: blur(1px);
+}
+
+.layered-lighting::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, 
+    rgba(0, 255, 255, 0.6) 0%, 
+    rgba(255, 0, 255, 0.4) 50%,
+    rgba(0, 255, 255, 0.6) 100%);
+  border-radius: inherit;
+  z-index: -1;
+  animation: gradient-rotation 3s linear infinite reverse;
+  opacity: 0.8;
+}
+
+/* Diffraction Effects */
+.diffraction-effect {
+  position: relative;
+  background: transparent;
+  backdrop-filter: blur(15px) saturate(150%) hue-rotate(0deg);
+  animation: diffraction-shift 6s ease-in-out infinite;
+}
+
+@keyframes diffraction-shift {
+  0%, 100% { 
+    backdrop-filter: blur(15px) saturate(150%) hue-rotate(0deg);
+    filter: brightness(1) contrast(1);
+  }
+  25% { 
+    backdrop-filter: blur(20px) saturate(180%) hue-rotate(10deg);
+    filter: brightness(1.1) contrast(1.1);
+  }
+  50% { 
+    backdrop-filter: blur(25px) saturate(200%) hue-rotate(20deg);
+    filter: brightness(1.2) contrast(1.2);
+  }
+  75% { 
+    backdrop-filter: blur(20px) saturate(180%) hue-rotate(10deg);
+    filter: brightness(1.1) contrast(1.1);
+  }
+}
+
+/* Clean Transparency with Alive Effects */
+.alive-glass {
+  background: transparent;
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.alive-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(0, 255, 255, 0.05) 0%, 
+    transparent 50%),
+    radial-gradient(circle at 70% 70%, 
+    rgba(255, 0, 255, 0.04) 0%, 
+    transparent 50%);
+  border-radius: inherit;
+  animation: alive-pulse 4s ease-in-out infinite;
+}
+
+.alive-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, 
+    transparent 40%, 
+    rgba(255, 255, 255, 0.03) 50%, 
+    transparent 60%);
+  border-radius: inherit;
+  animation: alive-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes alive-pulse {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes alive-shimmer {
+  0%, 100% { 
+    transform: translateX(-100%) rotate(45deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: translateX(100%) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+/* Edge lighting system */
+.edge-lighting-cyan {
+  position: relative;
+}
+
+
+.edge-lighting-cyan::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, 
+    #00FFFF, #00E5FF, #00FFFF);
+  border-radius: inherit;
+  z-index: -1;
+  animation: gradient-rotation 3s linear infinite;
+  opacity: 0.6;
+}
+
+.edge-lighting-magenta {
+  position: relative;
+}
+
+
+.edge-lighting-magenta::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, 
+    #FF00FF, #E144FF, #FF00FF);
+  border-radius: inherit;
+  z-index: -1;
+  animation: gradient-rotation 3s linear infinite;
+  opacity: 0.6;
+}
+
+/* Refraction effects */
+.refraction-effect {
+  filter: hue-rotate(0deg) brightness(1) contrast(1.1);
+  animation: refraction-shift 4s ease-in-out infinite;
+}
+
+/* Motion blur enhancements */
+.motion-blur-enhanced {
+  animation: motion-blur-streak 3s linear infinite;
+  filter: blur(1px);
+}
+
+.motion-blur-fast {
+  animation: motion-blur-streak 2s linear infinite;
+  filter: blur(2px);
+}
+
+.holo-glass {
+  background: linear-gradient(135deg, 
+    rgba(0, 229, 255, 0.1) 0%, 
+    rgba(225, 68, 255, 0.05) 50%, 
+    rgba(167, 180, 198, 0.1) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 0 30px rgba(0, 229, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.holo-border {
+  position: relative;
+}
+
+
+.holo-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, 
+    #00E5FF, #E144FF, #9D68FF, #00E5FF);
+  background-size: 400% 400%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: gradientShift 3s linear infinite;
+  opacity: 0.6;
+}
+
+.holo-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Custom PsyChat styles */
+.psychat-gradient {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+}
+
+.psychat-card {
+  @apply bg-black/20 backdrop-blur-lg border border-white/10 rounded-xl shadow-xl;
+}
+
+/* CRT hero utilities */
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 1px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0) 3px
+  );
+  mix-blend-mode: soft-light;
+}
+
+.crt-vignette {
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.7);
+}
+
+.crt-glow {
+  text-shadow: 0 0 6px rgba(16, 185, 129, 0.6), 0 0 16px rgba(16, 185, 129, 0.4);
+}
+
+.crt-curvature {
+  transform: perspective(1200px) translateZ(0);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 229, 255, 0.3);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 229, 255, 0.5);
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+/* Neon graph utilities */
+.neon-stroke {
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
+}
+
+@keyframes neonPulse {
+  0%, 100% { r: 14; opacity: 0.9; }
+  50% { r: 18; opacity: 1; }
+}
+
+.neon-node-pulse {
+  animation: neonPulse 1.8s ease-in-out infinite;
+}
+
+/* Chat minimal gradient background */
+.chat-bg-simple {
+  background: radial-gradient(1200px 800px at 10% 10%, rgba(34,197,94,0.06), transparent 60%),
+              radial-gradient(900px 600px at 90% 20%, rgba(59,130,246,0.06), transparent 60%),
+              radial-gradient(1000px 700px at 50% 90%, rgba(168,85,247,0.06), transparent 60%),
+              #000;
+}
+
+/* Typography System */
+.text-display { 
+  font-family: var(--font-display); 
+  font-weight: 700; 
+  letter-spacing: 0.05em; 
+}
+
+.text-heading-major { 
+  font-family: var(--font-body); 
+  font-weight: 600; 
+  letter-spacing: 0.01em; 
+}
+
+.text-heading { 
+  font-family: var(--font-body); 
+  font-weight: 500; 
+  letter-spacing: 0.01em; 
+}
+
+.text-body { 
+  font-family: var(--font-body); 
+  font-weight: 400; 
+  line-height: 1.6; 
+}
+
+.text-mono { 
+  font-family: var(--font-mono); 
+  font-weight: 500; 
+}
+
+.text-special { 
+  font-family: var(--font-special); 
+  font-weight: 500; 
+  letter-spacing: 0.03em; 
+}
+
+/* Typography Size Utilities */
+.text-display-lg { 
+  font-size: clamp(2.5rem, 5vw, 4rem); 
+}
+
+.text-display-md { 
+  font-size: clamp(2rem, 4vw, 3rem); 
+}
+
+.text-h1 { 
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem); 
+}
+
+.text-h2 { 
+  font-size: clamp(1.5rem, 3vw, 2rem); 
+}
+
+.text-h3 { 
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem); 
+}
+
+.text-h4 { 
+  font-size: clamp(1.125rem, 2vw, 1.25rem); 
+}
+
+.text-h5 { 
+  font-size: clamp(1rem, 1.5vw, 1.125rem); 
+}
+
+.text-h6 { 
+  font-size: clamp(0.875rem, 1.25vw, 1rem); 
+}
+
+.text-body-lg { 
+  font-size: clamp(1.125rem, 2vw, 1.25rem); 
+}
+
+.text-body-md { 
+  font-size: clamp(1rem, 1.5vw, 1.125rem); 
+}
+
+.text-body-sm { 
+  font-size: clamp(0.875rem, 1.25vw, 1rem); 
+}
+
+.text-caption { 
+  font-size: clamp(0.75rem, 1vw, 0.875rem); 
+}
+
+/* Legacy font classes - updated to use new system */
+.font-futuristic {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.font-terminal {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+/* Force wallet button styling with high specificity */
+.psychat-button,
+.wallet-adapter-button,
+.wallet-adapter-button-trigger,
+[data-testid="wallet-adapter-button"],
+.wallet-adapter-modal-button {
+  background: transparent !important;
+  border: 1px solid rgba(0, 255, 255, 0.3) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.psychat-button:hover,
+.wallet-adapter-button:hover,
+.wallet-adapter-button-trigger:hover,
+[data-testid="wallet-adapter-button"]:hover,
+.wallet-adapter-modal-button:hover {
+  background: rgba(0, 255, 255, 0.1) !important;
+  border-color: rgba(0, 255, 255, 0.5) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3) !important;
+}
+
+/* Neon corner effects */
+.psychat-button::before,
+.wallet-adapter-button::before,
+.wallet-adapter-button-trigger::before,
+[data-testid="wallet-adapter-button"]::before,
+.wallet-adapter-modal-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  pointer-events: none !important;
+}
+
+.psychat-button:hover::before,
+.wallet-adapter-button:hover::before,
+.wallet-adapter-button-trigger:hover::before,
+[data-testid="wallet-adapter-button"]:hover::before,
+.wallet-adapter-modal-button:hover::before {
+  opacity: 1 !important;
+}
+
+.psychat-button::after,
+.wallet-adapter-button::after,
+.wallet-adapter-button-trigger::after,
+[data-testid="wallet-adapter-button"]::after,
+.wallet-adapter-modal-button::after {
+  content: '' !important;
+  position: absolute !important;
+  top: -2px !important;
+  left: -2px !important;
+  right: -2px !important;
+  bottom: -2px !important;
+  background: linear-gradient(45deg, rgba(0, 255, 255, 0.3), transparent, rgba(0, 255, 255, 0.3)) !important;
+  border-radius: inherit !important;
+  z-index: -1 !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.psychat-button:hover::after,
+.wallet-adapter-button:hover::after,
+.wallet-adapter-button-trigger:hover::after,
+[data-testid="wallet-adapter-button"]:hover::after,
+.wallet-adapter-modal-button:hover::after {
+  opacity: 1 !important;
+}
+
+.psychat-input {
+  @apply bg-black/30 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-psy-purple;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  .psychat-mobile {
+    @apply px-4 py-2 text-sm;
+  }
+}
+
+/* PsyChat Holographic Theme Utilities */
+.holo-glow {
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 40px rgba(255, 0, 255, 0.3);
+}
+
+.holo-panel {
+  @apply backdrop-blur-xl bg-black/30 border border-cyan-400/20 rounded-2xl;
+}
+
+.holo-text {
+  @apply bg-gradient-to-r from-cyan-400 to-fuchsia-500 bg-clip-text text-transparent font-bold;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+.holo-border {
+  position: relative;
+  border: 1px solid transparent;
+  background: linear-gradient(45deg, #00ffff, #ff00ff) border-box;
+  border-radius: inherit;
+}
+
+.holo-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask-composite: xor;
+}
+
+/* Futuristic Typography - Updated to use new system */
+.font-futuristic-sans {
+  font-family: var(--font-special);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.font-futuristic-mono {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* Crystal Glass Effect System */
+.crystal-glass {
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(0,255,255,0.08), transparent 60%), 
+    radial-gradient(circle at 80% 80%, rgba(255,0,255,0.08), transparent 60%), 
+    rgba(10,10,20,0.28);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px 0 16px 0;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.crystal-glass-hover {
+  transition: all 0.3s ease;
+}
+
+.crystal-glass-hover:hover {
+  box-shadow: inset 0 0 2px rgba(255,255,255,0.2), 0 0 10px rgba(0,255,255,0.3);
+}
+
+/* Refraction & Reflection Layers */
+.refraction-overlay {
+  position: relative;
+}
+
+
+.refraction-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+  mix-blend-mode: overlay;
+  filter: blur(8px);
+  opacity: 0.6;
+}
+
+/* Holographic Grid Background */
+.holographic-grid {
+  background-image: 
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: moveGrid 40s linear infinite;
+}
+
+@keyframes moveGrid {
+  from { background-position: 0 0; }
+  to { background-position: 40px 40px; }
+}
+
+/* Crystal System - Sharp Geometric Design */
+.crystal-layer-system {
+  position: relative;
+}
+
+
+.crystal-layer-1 { z-index: 1; transform: translateZ(0px); }
+.crystal-layer-2 { z-index: 2; transform: translateZ(10px); }
+.crystal-layer-3 { z-index: 3; transform: translateZ(20px); }
+.crystal-layer-4 { z-index: 4; transform: translateZ(30px); }
+
+/* Precise geometric overlays */
+.geometric-overlay {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.geometric-overlay-dense {
+  background: 
+    linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.geometric-overlay-sparse {
+  background: 
+    linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Crystal facets - sharp angular surfaces */
+.crystal-facet {
+  clip-path: polygon(0% 0%, 85% 0%, 100% 15%, 100% 100%, 15% 100%, 0% 85%);
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #00FFFF, #FF00FF) 1;
+}
+
+.crystal-panel {
+  background: 
+    linear-gradient(135deg, rgba(0,255,255,0.08) 0%, transparent 50%),
+    linear-gradient(45deg, rgba(255,0,255,0.08) 0%, transparent 50%),
+    rgba(10,10,20,0.32);
+  backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px 0 16px 0;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  position: relative;
+}
+
+
+/* Solid neon colors - no gradients */
+.neon-solid-cyan {
+  color: #00FFFF;
+  text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+}
+
+.neon-solid-magenta {
+  color: #FF00FF;
+  text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF, 0 0 30px #FF00FF;
+}
+
+.neon-solid-purple {
+  color: #9D68FF;
+  text-shadow: 0 0 10px #9D68FF, 0 0 20px #9D68FF, 0 0 30px #9D68FF;
+}
+
+/* Sharp geometric lines */
+.crystal-line {
+  background: rgba(0,255,255,0.4);
+  box-shadow: 0 0 6px rgba(0,255,255,0.2), 0 0 12px rgba(0,255,255,0.1);
+  height: 2px;
+  width: 100%;
+  z-index: 10;
+}
+
+.crystal-line-magenta {
+  background: rgba(255,0,255,0.4);
+  box-shadow: 0 0 6px rgba(255,0,255,0.2), 0 0 12px rgba(255,0,255,0.1);
+  height: 2px;
+  width: 100%;
+  z-index: 10;
+}
+
+.crystal-line-purple {
+  background: rgba(157,104,255,0.4);
+  box-shadow: 0 0 6px rgba(157,104,255,0.2), 0 0 12px rgba(157,104,255,0.1);
+  height: 2px;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Crystal grid system */
+.crystal-grid {
+  background-image: 
+    linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,255,255,0.1) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.crystal-grid-dense {
+  background-size: 5px 5px;
+}
+
+.crystal-grid-sparse {
+  background-image: 
+    linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,255,255,0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Sharp corner accents */
+.crystal-corner-tl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 3px solid #00FFFF;
+  border-left: 3px solid #00FFFF;
+  box-shadow: 0 0 12px #00FFFF, 0 0 24px rgba(0,255,255,0.3);
+  z-index: 10;
+}
+
+.crystal-corner-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 3px solid #FF00FF;
+  border-right: 3px solid #FF00FF;
+  box-shadow: 0 0 12px #FF00FF, 0 0 24px rgba(255,0,255,0.3);
+  z-index: 10;
+}
+
+.crystal-corner-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-bottom: 3px solid #9D68FF;
+  border-left: 3px solid #9D68FF;
+  box-shadow: 0 0 12px #9D68FF, 0 0 24px rgba(157,104,255,0.3);
+  z-index: 10;
+}
+
+.crystal-corner-br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-bottom: 3px solid #00FFFF;
+  border-right: 3px solid #00FFFF;
+  box-shadow: 0 0 12px #00FFFF, 0 0 24px rgba(0,255,255,0.3);
+  z-index: 10;
+}
+
+/* Atomic/Molecular Structure */
+.crystal-atom {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  transform: rotate(45deg);
+  position: relative;
+  box-shadow: 0 0 15px currentColor;
+}
+
+.crystal-nucleus {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px currentColor;
+}
+
+.crystal-bond {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.crystal-terminal {
+  background: rgba(0,0,0,0.8);
+  border: 1px solid #00FFFF;
+  position: relative;
+  overflow: hidden;
+}
+
+.crystal-terminal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,255,255,0.1) 1px, transparent 1px);
+  background-size: 8px 8px;
+  pointer-events: none;
+}
+
+.crystal-status-indicator {
+  width: 8px;
+  height: 8px;
+  background: #00FFFF;
+  box-shadow: 0 0 10px #00FFFF;
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+
+/* Remove gradients utility */
+.no-gradients {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Sharp geometric borders */
+.crystal-border {
+  border: 1px solid #00FFFF;
+  box-shadow: 0 0 10px rgba(0,255,255,0.3);
+}
+
+.crystal-border-magenta {
+  border: 1px solid #FF00FF;
+  box-shadow: 0 0 10px rgba(255,0,255,0.3);
+}
+
+.crystal-border-purple {
+  border: 1px solid #9D68FF;
+  box-shadow: 0 0 10px rgba(157,104,255,0.3);
+}
+
+/* Accent Micro-Details */
+.accent-corner-cyan {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0,255,255,0.8);
+  box-shadow: 0 0 8px #00ffff;
+  top: 8px;
+  left: 8px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.accent-corner-fuchsia {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,0,255,0.8);
+  box-shadow: 0 0 8px #ff00ff;
+  bottom: 8px;
+  right: 8px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Enhanced Motion Variants */
+.motion-crystal-entrance {
+  animation: crystalEntrance 0.6s ease-out;
+}
+
+@keyframes crystalEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.98) translateY(10px);
+    filter: blur(4px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.01) translateY(-2px);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.motion-crystal-hover {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.motion-crystal-hover:hover {
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 
+    0 0 20px rgba(0,255,255,0.3),
+    inset 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* Chat Section Background - Matching Terminal Style */
+.chat-section-background {
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(0,255,255,0.08), transparent 60%), 
+    radial-gradient(circle at 80% 80%, rgba(255,0,255,0.08), transparent 60%), 
+    rgba(10,10,20,0.28);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px 0 16px 0;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+/* Chat Section HNFT Revamp Styles */
+
+/* Chat Section Container */
+.chat-section-container {
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* HNFT Section Styles */
+.hnft-section-expanded {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-section-expanded:not(.w-full) {
+  max-width: 20rem; /* w-80 equivalent */
+}
+
+.hnft-section-expanded.w-full {
+  max-width: 28rem; /* max-w-md equivalent */
+  margin: 0 auto;
+}
+
+/* HNFT Sidebar */
+.hnft-sidebar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 40;
+}
+
+.hnft-sidebar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 229, 255, 0.15);
+}
+
+/* Chat Terminal Section */
+.chat-terminal-section {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateX(20px);
+  animation: slideInFromRight 0.6s ease-out forwards;
+  height: 100%;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+@keyframes slideInFromRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* HNFT Identity Card Animations */
+.hnft-identity-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-identity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.1);
+}
+
+/* HNFT Status Compact Animations */
+.hnft-status-compact {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-status-compact:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.15);
+}
+
+/* HNFT Minting Flow Animations */
+.hnft-minting-flow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-minting-flow .step-indicator {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-minting-flow .step-indicator.completed {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chat-section-container {
+    padding: 1rem;
+  }
+  
+  .hnft-section-expanded {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  .hnft-sidebar {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .chat-terminal-section {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .chat-section-container {
+    padding: 0.5rem;
+  }
+  
+  .hnft-section-expanded {
+    padding: 1rem;
+  }
+}
+
+/* Transition Classes for Framer Motion */
+.hnft-expand-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.hnft-expand-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-expand-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hnft-expand-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Chat Terminal Animations */
+.chat-terminal {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 70vh;
+}
+
+.chat-terminal:hover {
+  box-shadow: 0 10px 30px rgba(0, 229, 255, 0.1);
+}
+
+/* Message Animations */
+.message-enter {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.message-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading States */
+.hnft-loading {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Focus States */
+.hnft-identity-card:focus-within {
+  outline: 2px solid rgba(0, 229, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.hnft-status-compact:focus-within {
+  outline: 2px solid rgba(0, 229, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .hnft-identity-card,
+  .hnft-status-compact,
+  .chat-terminal,
+  .hnft-minting-flow {
+    transition: none;
+  }
+  
+  .hnft-identity-card:hover,
+  .hnft-status-compact:hover,
+  .chat-terminal:hover {
+    transform: none;
+  }
+}
+
+/* Message Bubble Styles */
+.message-bubble {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message-bubble:hover {
+  transform: translateY(-1px);
+}
+
+/* User messages - Right aligned, cyan */
+.message-bubble.user {
+  margin-left: auto;
+  max-width: 85%;
+}
+
+.message-bubble.user .crystal-glass {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.10), rgba(0, 229, 255, 0.03));
+  border: 1px solid rgba(0, 229, 255, 0.20);
+  border-radius: 0.75rem;
+}
+
+/* AI messages - Left aligned, magenta */
+.message-bubble.ai {
+  margin-right: auto;
+  max-width: 85%;
+}
+
+.message-bubble.ai .crystal-glass {
+  background: linear-gradient(135deg, rgba(225, 68, 255, 0.10), rgba(225, 68, 255, 0.03));
+  border: 1px solid rgba(225, 68, 255, 0.20);
+  border-radius: 0.75rem;
+}
+
+/* Typing Indicator Animation */
+.typing-indicator {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.typing-bubble {
+  background: linear-gradient(135deg, rgba(225, 68, 255, 0.10), rgba(225, 68, 255, 0.03));
+  border: 1px solid rgba(225, 68, 255, 0.20);
+  border-radius: 0.75rem;
+}
+
+/* Session Header Styles */
+.session-header {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.session-header:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.1);
+}
+
+/* Message Input Styles */
+.message-input-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message-input-container:focus-within {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 20px rgba(0, 229, 255, 0.10);
+}
+
+/* Responsive Message Bubbles */
+@media (max-width: 768px) {
+  .message-bubble.user,
+  .message-bubble.ai {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 640px) {
+  .message-bubble.user,
+  .message-bubble.ai {
+    max-width: 95%;
+  }
+  
+  .typing-bubble {
+    padding: 0.75rem;
+  }
+  
+  .message-input-container .crystal-glass {
+    padding: 0.75rem;
+  }
+}
+
+/* Keyboard shortcuts styling */
+kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.25rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* HNFT Identity Card Button Styles */
+.hnft-identity-card button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.hnft-identity-card button:hover {
+  transform: scale(1.05);
+}
+
+.hnft-identity-card button:active {
+  transform: scale(0.95);
+}
+
+/* HNFT Card Header Buttons */
+.hnft-identity-card .header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hnft-identity-card .expand-button {
+  color: rgba(0, 229, 255, 0.8);
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.hnft-identity-card .expand-button:hover {
+  color: rgba(0, 229, 255, 1);
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+/* Neon PsyChat Text Animation - Reduced Brightness */
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 1px rgba(0, 255, 255, 0.25),
+      0 0 2px rgba(0, 255, 255, 0.25),
+      0 0 3px rgba(0, 255, 255, 0.25),
+      0 0 4px rgba(0, 255, 255, 0.25),
+      0 0 6px rgba(0, 255, 255, 0.25),
+      0 0 8px rgba(0, 255, 255, 0.25);
+  }
+  50% {
+    text-shadow: 
+      0 0 0.5px rgba(0, 255, 255, 0.15),
+      0 0 1px rgba(0, 255, 255, 0.15),
+      0 0 1.5px rgba(0, 255, 255, 0.15),
+      0 0 2px rgba(0, 255, 255, 0.15),
+      0 0 3px rgba(0, 255, 255, 0.15),
+      0 0 4px rgba(0, 255, 255, 0.15);
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 
+      0 0 1px rgba(0, 255, 255, 0.25),
+      0 0 2px rgba(0, 255, 255, 0.25),
+      0 0 3px rgba(0, 255, 255, 0.25),
+      0 0 4px rgba(0, 255, 255, 0.25);
+  }
+  20%, 24%, 55% {
+    text-shadow: 
+      0 0 0.5px rgba(0, 255, 255, 0.15),
+      0 0 1px rgba(0, 255, 255, 0.15),
+      0 0 1.5px rgba(0, 255, 255, 0.15),
+      0 0 2px rgba(0, 255, 255, 0.15);
+  }
+}
+
+.psychat-neon {
+  animation: neon-pulse 2s ease-in-out infinite;
+  color: rgba(0, 255, 255, 0.75);
+}
+
+.psychat-neon:hover {
+  animation: neon-flicker 1.5s linear infinite;
+  color: rgba(0, 255, 255, 0.9);
+}
+
+.hnft-identity-card .close-button {
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hnft-identity-card .close-button:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* HNFT Card Collapse Animation */
+.hnft-identity-card .collapsible-content {
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-identity-card .collapsible-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.hnft-identity-card .collapsible-content.expanded {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+/* HNFT Card Collapsed State */
+.hnft-identity-card .collapsed-state {
+  padding: 0.75rem;
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hnft-identity-card .collapsed-state:hover {
+  background: rgba(0, 229, 255, 0.08);
+  border-color: rgba(0, 229, 255, 0.15);
+}
+
+/* HNFT Sidebar Positioning */
+.hnft-sidebar {
+  position: relative;
+  z-index: 50;
+  width: 16rem;
+  max-width: 16rem;
+}
+
+.hnft-sidebar .hnft-status-compact {
+  position: relative;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+
+/* Ensure buttons are clickable */
+.hnft-sidebar button {
+  pointer-events: auto;
+  z-index: 51;
+  position: relative;
+}
+
+/* Dock Icon Positioning */
+.dock-icon-container {
+  position: relative !important;
+}
+
+.dock-icon-inner {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) translateY(2px) !important;
+}
+
