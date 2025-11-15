@@ -1,0 +1,12 @@
+{
+  "name": "polka-psychat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd psychat-polkadot && npm run dev",
+    "build": "cd psychat-polkadot && npm run build",
+    "start": "cd psychat-polkadot && npm start",
+    "install": "cd psychat-polkadot && npm install"
+  }
+}
+
