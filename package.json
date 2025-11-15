@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "postinstall": "node scripts/setup-xxdk.js",
+    "setup-xxdk": "node scripts/setup-xxdk.js"
   },
   "dependencies": {
     "@arkiv-network/sdk": "^0.4.4",
@@ -30,7 +32,8 @@
     "react-intersection-observer": "^9.16.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.3.0",
-    "three": "^0.180.0"
+    "three": "^0.180.0",
+    "xxdk-wasm": "^0.3.22"
   },
   "devDependencies": {
     "@types/node": "^20",

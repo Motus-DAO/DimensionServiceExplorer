@@ -72,3 +72,7 @@ temp/
 *.njsproj
 *.sln
 *.sw?
+
+# XX Network
+public/ndf.json
+node_modules/xxdk-wasm/ndf.json

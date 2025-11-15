@@ -4,6 +4,8 @@ import '../styles/globals.css';
 import { GridDistortionProvider } from '../contexts/GridDistortionContext';
 import { PolkadotWalletProvider } from '../contexts/PolkadotWalletContext';
 import { ArkivProvider } from '../contexts/ArkivContext';
+import { HyperbridgeProvider } from '../contexts/HyperbridgeContext';
+import { XXNetworkProvider } from '../contexts/XXNetworkContext';
 import AssistantWidget from '../components/AssistantWidget';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -29,10 +31,14 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <PolkadotWalletProvider>
       <ArkivProvider>
-        <GridDistortionProvider>
-          <Component {...pageProps} />
-          <AssistantWidget />
-        </GridDistortionProvider>
+        <HyperbridgeProvider>
+          <XXNetworkProvider>
+            <GridDistortionProvider>
+              <Component {...pageProps} />
+              <AssistantWidget />
+            </GridDistortionProvider>
+          </XXNetworkProvider>
+        </HyperbridgeProvider>
       </ArkivProvider>
     </PolkadotWalletProvider>
   );

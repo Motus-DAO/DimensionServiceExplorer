@@ -47,6 +47,12 @@ interface ChatTerminalProps {
   isHNFTVisible?: boolean;
   hasHNFT?: boolean;
   onNavigateToVideo?: () => void;
+  txCount?: number;
+  verified?: boolean;
+  xxReady?: boolean;
+  selfPubkeyBase64?: string | null;
+  selfToken?: string | null;
+  walletAddress?: string | null;
 }
 
 export default function ChatTerminal({
@@ -62,7 +68,13 @@ export default function ChatTerminal({
   onToggleHNFT,
   isHNFTVisible,
   hasHNFT = false,
-  onNavigateToVideo
+  onNavigateToVideo,
+  txCount,
+  verified,
+  xxReady,
+  selfPubkeyBase64,
+  selfToken,
+  walletAddress
 }: ChatTerminalProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -70,7 +82,7 @@ export default function ChatTerminal({
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [showScrollDown, setShowScrollDown] = useState(false);
   
-  // Arcium state
+  // Arkiv state
   const [arciumStatus, setArciumStatus] = useState<{
     isConnected: boolean;
     nodeCount: number;
@@ -107,7 +119,7 @@ export default function ChatTerminal({
     }
   }, []);
 
-  // Initialize Arcium service
+  // Initialize Arkiv service
   useEffect(() => {
     // Placeholder for XX Network initialization
     setIsArciumInitialized(true);
@@ -118,7 +130,7 @@ export default function ChatTerminal({
     });
   }, []);
 
-  // Update Arcium status periodically
+  // Update Arkiv status periodically
   useEffect(() => {
     if (!isArciumInitialized) return;
 
@@ -285,14 +297,14 @@ export default function ChatTerminal({
           </div>
         </div>
 
-        {/* Arcium Status Display - Mobile Optimized */}
+        {/* Arkiv Status Display - Mobile Optimized */}
         {hasHNFT && (
           <div className="mb-3 md:mb-4 p-2 md:p-3 rounded-lg bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-400/20">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center space-x-2 md:space-x-3">
                 <div className={`w-2 h-2 rounded-full ${arciumStatus.isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
                 <span className="text-xs md:text-body-sm text-white/80">
-                  Arcium MPC: {arciumStatus.isConnected ? 'Connected' : 'Disconnected'}
+                  Arkiv: {arciumStatus.isConnected ? 'Connected' : 'Disconnected'}
                 </span>
                 {arciumStatus.nodeCount > 0 && (
                   <span className="text-xs text-white/60">
@@ -302,8 +314,39 @@ export default function ChatTerminal({
               </div>
               <div className="flex items-center space-x-2">
                 <div className="text-xs px-2 py-1 rounded bg-green-500/20 text-green-300 border border-green-400/30">
-                  🔒 Encrypted
+                  📦 Arkiv
                 </div>
+                {typeof txCount === 'number' && (
+                  <div className="text-xs px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+                    Txs: {txCount}
+                  </div>
+                )}
+                {verified && (
+                  <div className="text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                    Verified
+                  </div>
+                )}
+                <div className={`text-xs px-2 py-1 rounded border ${xxReady ? 'bg-purple-500/20 text-purple-300 border-purple-400/30' : 'bg-gray-500/20 text-gray-300 border-gray-400/30'}`}>
+                  XX: {xxReady ? 'Ready' : 'Init'}
+                </div>
+                {!!selfPubkeyBase64 && !!selfToken && (
+                  <button
+                    onClick={() => {
+                      try {
+                        const payload = JSON.stringify({ pubkeyBase64: selfPubkeyBase64, token: selfToken });
+                        navigator.clipboard.writeText(payload);
+                      } catch {}
+                    }}
+                    className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30"
+                  >
+                    Copy XX ID
+                  </button>
+                )}
+                {!!walletAddress && (
+                  <div className="text-xs px-2 py-1 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
+                    Wallet: {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -362,7 +405,7 @@ export default function ChatTerminal({
               {encryptionStatus === 'encrypting' && (
                 <span className="flex items-center gap-1 md:gap-2">
                   <span>🔐</span>
-                  <span className="hidden sm:inline">Encrypting conversation with Arcium MPC...</span>
+                  <span className="hidden sm:inline">Writing conversation to Arkiv...</span>
                   <span className="sm:hidden">Encrypting...</span>
                 </span>
               )}
