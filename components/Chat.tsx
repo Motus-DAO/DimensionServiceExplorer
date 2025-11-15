@@ -4,6 +4,8 @@ import { storeEncryptedConversation } from '../lib/encrypted-data-storage';
 import { HoloPanel, HoloButton, HoloText } from '../components/ui/holo';
 import { ComplexMolecule, WaterMolecule } from '../components/ui';
 import { usePolkadotWallet } from '../contexts/PolkadotWalletContext';
+import { useArkiv } from '../contexts/ArkivContext';
+import { useArkivChat } from '../lib/hooks/useArkivChat';
 
 // New chat components
 import HNFTIdentityCard from './chat/HNFTIdentityCard';
@@ -35,6 +37,8 @@ interface ChatProps {
 export default function Chat({ onNavigateToVideo }: ChatProps) {
   const { isConnected: isWalletConnected, selectedAccount } = usePolkadotWallet();
   const walletAddress = selectedAccount?.address || null;
+  const { isConnected: isArkivConnected, connect: arkivConnect, ensureChatBase, mutateEntities, deriveChatBaseKey, walletClient, enc } = useArkiv();
+  const arkivChat = useArkivChat(walletAddress);
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -114,6 +118,31 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Connect Arkiv SDK and ensure chat base as soon as wallet is available
+  useEffect(() => {
+    const initArkiv = async () => {
+      try {
+        await arkivConnect();
+        if (walletAddress) {
+          await ensureChatBase(walletAddress);
+          console.log('[Arkiv] Chat base ensured', { polkadotAddress: walletAddress });
+        }
+      } catch {}
+    };
+    initArkiv();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress]);
+
+  const appendTxLog = (entry: { txHash?: string; entityKey?: string; type: string; sessionId?: string; role?: string; timestamp: number }) => {
+    try {
+      const key = 'psychat_arkiv_tx_log';
+      const raw = localStorage.getItem(key);
+      const arr = raw ? JSON.parse(raw) : [];
+      arr.push(entry);
+      localStorage.setItem(key, JSON.stringify(arr));
+    } catch {}
+  };
 
   // Removed cleanupOldTransactions - was Solana-specific
 
@@ -241,6 +270,12 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
       timestamp: new Date(),
     };
     setMessages(prev => [...prev, userMsg]);
+    try {
+      await arkivChat.ensureBase();
+      const receipt = await arkivChat.storeMessage(userId, 'user', userText);
+      appendTxLog({ txHash: receipt.txHash, entityKey: receipt.entityKey, type: 'chatMessage', sessionId: userId, role: 'user', timestamp: Date.now() });
+      console.log('[Arkiv] Message stored', { role: 'user', entityKey: receipt.entityKey, txHash: receipt.txHash, sessionId: userId });
+    } catch {}
 
     try {
       // Set AI thinking state
@@ -264,6 +299,11 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, aiMsg]);
+      try {
+        const receipt2 = await arkivChat.storeMessage(userId, 'assistant', aiText);
+        appendTxLog({ txHash: receipt2.txHash, entityKey: receipt2.entityKey, type: 'chatMessage', sessionId: userId, role: 'assistant', timestamp: Date.now() });
+        console.log('[Arkiv] Message stored', { role: 'assistant', entityKey: receipt2.entityKey, txHash: receipt2.txHash, sessionId: userId });
+      } catch {}
 
       // Keep chatting fluid; minting occurs only on "End Session"
     } catch (e) {
@@ -366,16 +406,35 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
         }, storageCid);
       }
       
-      // Step 3: Create session asset (placeholder for Polkadot asset creation)
-      console.log('Creating session asset...');
       const sessionStartTime = messages.length > 0 ? messages[0].timestamp : new Date();
       const sessionEndTime = new Date();
-      
-      // Placeholder for Polkadot asset creation
-      const txHash = `0x${Math.random().toString(16).substr(2, 64)}`;
+      const addr = walletAddress || '';
+      if (!isArkivConnected) {
+        await arkivConnect();
+      }
+      const baseKey = deriveChatBaseKey(addr);
+      await ensureChatBase(addr);
+      const attributes = [
+        { key: 'type', value: 'chatSession' },
+        { key: 'polkadotAddress', value: addr },
+        { key: 'chatBaseKey', value: baseKey },
+        { key: 'sessionId', value: sessionId },
+        { key: 'messageCount', value: String(messages.length) },
+        { key: 'start', value: String(sessionStartTime.getTime()) },
+        { key: 'end', value: String(sessionEndTime.getTime()) },
+        { key: 'storageCid', value: storageCid },
+        { key: 'encrypted', value: encryptionResult ? 'true' : 'false' },
+        { key: 'version', value: '1' },
+      ];
+      const { entityKey: sessionEntityKey, txHash } = await walletClient.createEntity({
+        payload: enc.encode('Chat Session'),
+        contentType: 'text/plain',
+        attributes,
+        expiresIn: 200,
+      });
+      appendTxLog({ txHash, entityKey: sessionEntityKey, type: 'chatSession', sessionId, timestamp: Date.now() });
+      console.log('[Arkiv] Session stored', { entityKey: sessionEntityKey, txHash, sessionId, attributes });
       const txUrl = buildTxUrl(txHash);
-      
-      // Store session data
       const newChatNFT = {
         transactionSignature: txHash,
         sessionId,

@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
+    "@arkiv-network/sdk": "^0.4.4",
     "@polkadot/extension-dapp": "^0.62.4",
     "@types/three": "^0.180.0",
     "autoprefixer": "^10.4.16",

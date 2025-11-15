@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import '../styles/globals.css';
 import { GridDistortionProvider } from '../contexts/GridDistortionContext';
 import { PolkadotWalletProvider } from '../contexts/PolkadotWalletContext';
+import { ArkivProvider } from '../contexts/ArkivContext';
 import AssistantWidget from '../components/AssistantWidget';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -27,10 +28,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <PolkadotWalletProvider>
-      <GridDistortionProvider>
-        <Component {...pageProps} />
-        <AssistantWidget />
-      </GridDistortionProvider>
+      <ArkivProvider>
+        <GridDistortionProvider>
+          <Component {...pageProps} />
+          <AssistantWidget />
+        </GridDistortionProvider>
+      </ArkivProvider>
     </PolkadotWalletProvider>
   );
 }
