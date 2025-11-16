@@ -7,6 +7,7 @@ import { ArkivProvider } from '../contexts/ArkivContext';
 import { HyperbridgeProvider } from '../contexts/HyperbridgeContext';
 import { XXNetworkProvider } from '../contexts/XXNetworkContext';
 import AssistantWidget from '../components/AssistantWidget';
+import { FractalCaptureProvider } from '../contexts/FractalCaptureContext';
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mounted, setMounted] = useState(false);
@@ -33,10 +34,12 @@ export default function App({ Component, pageProps }: AppProps) {
       <ArkivProvider>
         <HyperbridgeProvider>
           <XXNetworkProvider>
-            <GridDistortionProvider>
-              <Component {...pageProps} />
-              <AssistantWidget />
-            </GridDistortionProvider>
+            <FractalCaptureProvider>
+              <GridDistortionProvider>
+                <Component {...pageProps} />
+                <AssistantWidget />
+              </GridDistortionProvider>
+            </FractalCaptureProvider>
           </XXNetworkProvider>
         </HyperbridgeProvider>
       </ArkivProvider>

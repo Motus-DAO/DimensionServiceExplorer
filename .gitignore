@@ -26,6 +26,11 @@ dist/
 coverage/
 .nyc_output
 
+# Hardhat
+artifacts/
+cache/
+ignition/deployments/
+
 # IDE
 .vscode/
 .idea/

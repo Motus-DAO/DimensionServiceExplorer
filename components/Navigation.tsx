@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { HoloText } from "./ui";
-import { FaHome, FaPlay, FaTerminal, FaUser } from "react-icons/fa";
+import { FaHome, FaPlay, FaTerminal, FaUser, FaGlobe } from "react-icons/fa";
 
 export const Navigation: React.FC = () => {
   return (
@@ -26,6 +26,13 @@ export const Navigation: React.FC = () => {
             <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-cyan-500/10 transition-colors cursor-pointer">
               <FaTerminal className="text-cyan-400" />
               <HoloText size="sm" weight="normal">Holo Terminal</HoloText>
+            </div>
+          </Link>
+
+          <Link href="/fractales">
+            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-cyan-500/10 transition-colors cursor-pointer">
+              <FaGlobe className="text-cyan-400" />
+              <HoloText size="sm" weight="normal">Fractales</HoloText>
             </div>
           </Link>
           

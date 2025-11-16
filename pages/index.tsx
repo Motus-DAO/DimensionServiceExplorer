@@ -24,6 +24,8 @@ import {
   HiChartBar,
   HiUser
 } from 'react-icons/hi';
+import { FaGlobe } from 'react-icons/fa';
+import { useRouter } from 'next/router';
 
 // Section Components
 import {
@@ -39,6 +41,7 @@ import {
 
 export default function Home() {
   const { isConnected: connected, connect } = usePolkadotWallet();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'home' | 'chat' | 'videochat' | 'marketplace' | 'dashboard' | 'profile'>('home');
   const [mounted, setMounted] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -253,6 +256,7 @@ export default function Home() {
               { icon: <HiVideoCamera className="text-emerald-400" size={24} />, label: 'Video', onClick: () => setActiveTab('videochat') },
               { icon: <HiShoppingBag className="text-purple-400" size={24} />, label: 'Marketplace', onClick: () => setActiveTab('marketplace') },
               { icon: <HiChartBar className="text-blue-400" size={24} />, label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
+              { icon: <FaGlobe className="text-cyan-400" size={24} />, label: 'Fractales', onClick: () => router.push('/fractales') },
               { icon: <HiUser className="text-orange-400" size={24} />, label: 'Profile', onClick: () => setActiveTab('profile') },
             ]}
             panelHeight={68}
