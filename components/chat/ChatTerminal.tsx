@@ -48,6 +48,7 @@ interface ChatTerminalProps {
   hasHNFT?: boolean;
   onNavigateToVideo?: () => void;
   txCount?: number;
+  lastTxUrl?: string;
   verified?: boolean;
   xxReady?: boolean;
   selfPubkeyBase64?: string | null;
@@ -70,6 +71,7 @@ export default function ChatTerminal({
   hasHNFT = false,
   onNavigateToVideo,
   txCount,
+  lastTxUrl,
   verified,
   xxReady,
   selfPubkeyBase64,
@@ -320,6 +322,16 @@ export default function ChatTerminal({
                   <div className="text-xs px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
                     Txs: {txCount}
                   </div>
+                )}
+                {!!lastTxUrl && (
+                  <a
+                    href={lastTxUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs px-2 py-1 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 hover:bg-indigo-500/30 hover:text-indigo-200 transition-colors"
+                  >
+                    View last tx
+                  </a>
                 )}
                 {verified && (
                   <div className="text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">

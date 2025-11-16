@@ -122,9 +122,10 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
   };
 
   // Placeholder for transaction URL builder (to be replaced with Polkadot explorer)
-  const buildTxUrl = (sig: string) => {
-    // Placeholder - will be replaced with Polkadot explorer URL
-    return `#${sig}`;
+  const buildTxUrl = (hash: string) => {
+    const base = (process.env.NEXT_PUBLIC_ARKIV_EXPLORER_URL || 'https://explorer.mendoza.hoodi.arkiv.network/tx/').trim();
+    const sep = base.endsWith('/') ? '' : '/';
+    return `${base}${sep}${hash}`;
   };
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -585,6 +586,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
       
       receipt = await arkivChat.storeMessage(activeSessionId, 'user', textToStore);
       appendTxLog({ txHash: receipt.txHash, entityKey: receipt.entityKey, type: 'chatMessage', sessionId: activeSessionId, role: 'user', timestamp: Date.now() }, walletAddress);
+      if (receipt?.txHash) setLastTxUrl(buildTxUrl(receipt.txHash));
       console.log('[Arkiv] Message stored', { role: 'user', entityKey: receipt.entityKey, txHash: receipt.txHash, sessionId: activeSessionId });
     } catch (err) {
       console.error('[Arkiv] Failed to store user message', err);
@@ -668,6 +670,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
         
         receipt2 = await arkivChat.storeMessage(activeSessionId, 'assistant', aiTextToStore);
         appendTxLog({ txHash: receipt2.txHash, entityKey: receipt2.entityKey, type: 'chatMessage', sessionId: activeSessionId, role: 'assistant', timestamp: Date.now() }, walletAddress);
+        if (receipt2?.txHash) setLastTxUrl(buildTxUrl(receipt2.txHash));
         console.log('[Arkiv] Message stored', { role: 'assistant', entityKey: receipt2.entityKey, txHash: receipt2.txHash, sessionId: activeSessionId });
       } catch (err) {
         console.error('[Arkiv] Failed to store assistant message', err);
@@ -1047,6 +1050,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
             hasHNFT={!!hnftPda}
             onNavigateToVideo={onNavigateToVideo}
             txCount={txCount}
+            lastTxUrl={lastTxUrl || undefined}
             verified={isSessionVerifiedState}
             xxReady={xxReady}
             selfPubkeyBase64={selfPubkeyBase64}
