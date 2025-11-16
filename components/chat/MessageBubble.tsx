@@ -93,12 +93,12 @@ export default function MessageBubble({ message, isUser }: MessageBubbleProps) {
               <div className={`flex flex-wrap gap-1 mt-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
                 {message.encrypted && (
                   <span className="text-xs bg-electric-cyan/15 text-electric-cyan px-2 py-0.5 rounded flex items-center gap-1">
-                    🔒 Arcium
+                    🔒 XX Network E2E encryption
                   </span>
                 )}
                 {message.encryptedData && (
                   <span className="text-xs bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded flex items-center gap-1">
-                    🛡️ MPC
+                    🛡️ Arkiv blockchain storage
                   </span>
                 )}
                 {message.arciumAnalysis && (
@@ -115,10 +115,10 @@ export default function MessageBubble({ message, isUser }: MessageBubbleProps) {
                 {!message.encrypted && !message.encryptedData && !message.arciumAnalysis && !message.hnftMinted && (
                   <>
                     <span className="text-xs bg-electric-cyan/15 text-electric-cyan px-2 py-0.5 rounded flex items-center gap-1">
-                      🔒 Arcium
+                      🔒 XX Network E2E encryption
                     </span>
                     <span className="text-xs bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded flex items-center gap-1">
-                      🛡️ MPC
+                      🛡️ Arkiv blockchain storage
                     </span>
                   </>
                 )}

@@ -85,7 +85,7 @@ const JoinCTASection: React.FC = () => {
                 transition={{ delay: 0.7 }}
                 className="flex items-center justify-center"
               >
-                <HoloText size="sm" className="text-white/60">🔒 Your data is encrypted with Arcium ZK proofs</HoloText>
+                <HoloText size="sm" className="text-white/60">🔒 Your data is encrypted with XX Network E2E encryption</HoloText>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -93,7 +93,7 @@ const JoinCTASection: React.FC = () => {
                 transition={{ delay: 0.8 }}
                 className="flex items-center justify-center"
               >
-                <HoloText size="sm" className="text-white/60">💰 Earn from data marketplace via Raydium AMM</HoloText>
+                <HoloText size="sm" className="text-white/60">💰 Earn from data marketplace via Polkadot DEX</HoloText>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -101,7 +101,7 @@ const JoinCTASection: React.FC = () => {
                 transition={{ delay: 0.9 }}
                 className="flex items-center justify-center"
               >
-                <HoloText size="sm" className="text-white/60">🚀 Auto-compound earnings with Reflect $rUSD</HoloText>
+                <HoloText size="sm" className="text-white/60">🚀 Auto-compound earnings with Polkadot payments</HoloText>
               </motion.div>
             </motion.div>
           </HoloPanel>

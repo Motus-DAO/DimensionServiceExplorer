@@ -550,6 +550,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [{ role: 'user', content: userText }], provider: 'xai', model: 'grok-2-1212' }),
       });
+      
       const data = await res.json();
       const aiText: string = data?.response || 'Sorry, there was an issue generating a response.';
       const sentiment: string = data?.sentiment || 'neutral';

@@ -13,7 +13,7 @@ const FeaturesShowcaseSection: React.FC = () => {
     {
       icon: <HiOutlineLockClosed className="w-8 h-8" />,
       title: 'Privacy First',
-      description: 'Arcium ZK proofs ensure your data is encrypted while proving integrity.',
+      description: 'XX Network quantum-resistant E2E encryption ensures your data is encrypted while stored on Arkiv Network.',
       color: 'from-cyan-400/10 to-blue-500/10'
     },
     {
