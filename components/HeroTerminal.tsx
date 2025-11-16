@@ -307,7 +307,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`line5-${animationKey}`}
-                            text="✓ Arcium ZK encryption active"
+                            text="✓ XX Network E2E encryption active"
                             speed={80}
                             maxIterations={15}
                             sequential={true}

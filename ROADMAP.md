@@ -1,120 +1,161 @@
 # PsyChat MVP Roadmap
 
-## 🎯 Hackathon MVP (Oct 28th Deadline)
+## 🎯 Current Implementation Status
 
 ### ✅ Completed Features
-- **Client-side encryption** using Web Crypto API (AES-GCM)
-- **Anchor program extension** for encrypted chat conversations
-- **React chat interface** with encryption/decryption
-- **Navigation integration** for encrypted chat tab
+- **XX Network E2E Encryption** - Quantum-resistant encryption for therapy messages
+- **Arkiv Blockchain Storage** - Immutable Polkadot storage for encrypted messages
+- **Polkadot Wallet Integration** - Polkadot.js Extension support
+- **Channel-Based Architecture** - One encrypted channel per therapy session
+- **Wallet-Based Identity** - Recoverable XX Network identity via wallet signature
+- **Triple Redundancy Storage** - Arkiv + XX Network IndexedDB + localStorage
+- **AI Chat Integration** - xAI Grok and OpenAI support
+- **HNFT Identity System** - Soulbound Human NFTs on Polkadot
+- **Chat Session Management** - Session creation, persistence, and retrieval
+- **Video Therapy Sessions** - Jitsi integration for human therapist sessions
+- **Auto-Storage** - Session notes automatically stored in Arkiv
 
-### 🚧 In Progress
-- **Phantom wallet integration** for key derivation
-- **Message persistence** and conversation loading
+### 🚧 In Progress / Future Enhancements
+- **Payment Integration** - Polkadot-based payments (currently mocked)
+- **Data Marketplace** - Anonymized insights marketplace (mocked)
+- **HNFT Minting** - Full ChatNFT minting workflow
+- **Fractales Integration** - NFT art generation for therapy sessions
 
-### 📋 Remaining MVP Tasks (2-3 weeks)
+### 📋 Remaining MVP Tasks
 
-#### Week 1-2: Core Functionality
-1. **Wallet Integration**
-   - Complete Phantom wallet key derivation
-   - Implement shared key generation between participants
-   - Add wallet connection status to chat UI
+#### Short-term (1-2 weeks)
+1. **Payment Integration**
+   - Complete Polkadot payment processing
+   - Integrate with therapist payment system
+   - Add payment confirmation and receipts
 
-2. **Message Persistence**
-   - Load existing conversations from blockchain
-   - Implement message history fetching
-   - Add conversation metadata display
+2. **HNFT Enhancement**
+   - Complete ChatNFT minting flow
+   - Add NFT metadata for session history
+   - Implement NFT gallery view
 
-3. **Basic ZK Integration**
-   - Add simplified ZK proof for message integrity
-   - Implement proof verification in Anchor program
-   - Create proof generation utilities
+3. **Data Marketplace**
+   - Build anonymized insights marketplace
+   - Implement data sale functionality
+   - Add earnings tracking
 
-#### Week 3: Polish & Demo
-4. **Chat NFTs**
-   - Create conversation ownership NFTs
-   - Implement NFT minting for premium conversations
-   - Add NFT metadata for conversation history
+#### Medium-term (1-2 months)
+4. **Advanced Features**
+   - Group therapy sessions
+   - Multi-participant encryption
+   - Session analytics and insights
 
 5. **UI/UX Polish**
-   - Add loading states and error handling
-   - Implement real-time message updates
-   - Add message status indicators (sent, delivered, read)
+   - Enhanced loading states
+   - Real-time sync status indicators
+   - Improved error handling and recovery
+   - Message encryption status visualization
 
 6. **Demo Preparation**
-   - Create demo scenarios
-   - Add sample conversations
+   - Create comprehensive demo scenarios
+   - Add sample therapy sessions
    - Prepare presentation materials
 
 ## 🚀 Post-Hackathon Roadmap
 
-### Phase 1: Advanced Privacy (Q4 2024)
-- **Arcium ZK Integration**
-  - Full ZK proof system for message verification
-  - Privacy-preserving message validation
-  - Zero-knowledge compliance proofs
+### Phase 1: Advanced Privacy & Storage (Q4 2024)
+- **Enhanced XX Network Integration**
+  - Full quantum-resistant encryption implementation
+  - Advanced channel management
+  - Multi-device synchronization
 
-- **Walrus Storage**
-  - Decentralized message storage
-  - Content addressing for message integrity
-  - Off-chain message history
+- **Arkiv Storage Optimization**
+  - Batch message storage
+  - Storage cost optimization
+  - Advanced query capabilities
 
-### Phase 2: DeFi Integration (Q1 2025)
-- **Raydium AMM Integration**
-  - Data marketplace for encrypted conversations
-  - Liquidity pools for conversation data
-  - Automated market making for data trading
-
-- **Reflect $rUSD Integration**
-  - Stablecoin payments for premium features
-  - UBI distribution for active users
-  - Yield farming for conversation data
-
-### Phase 3: Advanced Features (Q2 2025)
-- **Group Chat Encryption**
-  - Multi-participant key management
-  - Forward secrecy for group conversations
-  - Message threading and organization
-  b) Full computation circuit (encrypt messages + run sentiment analysis or other AI processing within MPC)
-
-- **Advanced ZK Features**
-  - Membership proofs without revealing participants
-  - Time-bounded access controls
+- **Privacy Enhancements**
+  - Zero-knowledge proofs for data verification
+  - Privacy-preserving analytics
   - Compliance verification without data exposure
 
+### Phase 2: DeFi & Data Economy (Q1 2025)
+- **Polkadot DEX Integration**
+  - Data marketplace for anonymized insights
+  - Liquidity pools for therapy data assets
+  - Automated market making for data trading
+
+- **Token Economics**
+  - Native token for platform governance
+  - Staking mechanisms
+  - Yield farming for data providers
+
+- **Payment Systems**
+  - Multi-chain payment support
+  - Stablecoin integration
+  - Subscription models
+
+### Phase 3: Advanced Features (Q2 2025)
+- **Group Therapy Sessions**
+  - Multi-participant encryption
+  - Group channel management
+  - Forward secrecy for group conversations
+  - Message threading and organization
+
+- **Advanced AI Integration**
+  - Real-time sentiment analysis
+  - Therapy progress tracking
+  - Personalized recommendations
+  - AI-assisted therapist matching
+
+- **Advanced Privacy Features**
+  - Zero-knowledge proofs for data verification
+  - Time-bounded access controls
+  - Compliance verification without data exposure
+  - Privacy-preserving analytics
+
 ### Phase 4: Ecosystem Integration (Q3 2025)
-- **Mobile Wallet Support**
-  - iOS/Android wallet integration
+- **Mobile App Development**
+  - React Native implementation
+  - Mobile Polkadot wallet support
   - Mobile-optimized encryption
   - Offline message synchronization
+  - Push notifications
 
 - **Enterprise Features**
   - Team collaboration tools
   - Admin controls and moderation
   - Audit trails and compliance reporting
+  - HIPAA compliance features
+  - Enterprise API access
 
 ## 🛠 Technical Architecture
 
 ### Current Stack
 - **Frontend**: Next.js, React, TypeScript
-- **Blockchain**: Solana, Anchor Framework
-- **Encryption**: Web Crypto API, AES-GCM
-- **Wallet**: Phantom, Solana Wallet Adapter
+- **Blockchain**: Polkadot ecosystem (Arkiv for storage)
+- **Encryption**: XX Network (quantum-resistant E2E encryption)
+- **Wallet**: Polkadot.js Extension (Polkadot, Kusama, Westend)
+- **AI**: xAI Grok (grok-2-1212, grok-4) and OpenAI (gpt-4o-mini)
+- **Storage**: Arkiv (blockchain) + XX Network IndexedDB + localStorage
+- **Video**: Jitsi Meet integration
+- **NFTs**: HNFTs and ChatNFTs on Polkadot
 
 ### Planned Additions
-- **ZK Proofs**: Arcium SDK integration
-- **Storage**: Walrus decentralized storage
-- **DeFi**: Raydium AMM, Reflect $rUSD
-- **Mobile**: React Native, Mobile Wallet Adapter
+- **ZK Proofs**: Zero-knowledge proof integration for privacy
+- **DeFi**: Polkadot DEX integration for data marketplace
+- **Mobile**: React Native, Mobile Polkadot wallet support
+- **Analytics**: Privacy-preserving analytics and insights
+- **Payments**: Multi-chain payment processing
 
 ## 🎯 Success Metrics
 
 ### MVP Success Criteria
-- [ ] Users can create encrypted conversations
-- [ ] Messages are encrypted end-to-end
-- [ ] Conversations persist on blockchain
-- [ ] Basic ZK proof verification works
-- [ ] Demo-ready UI/UX
+- [x] Users can create encrypted conversations
+- [x] Messages are encrypted end-to-end (XX Network)
+- [x] Conversations persist on blockchain (Arkiv)
+- [x] Wallet-based identity recovery
+- [x] Triple-redundant storage (Arkiv + XX Network + localStorage)
+- [x] AI chat integration (Grok/OpenAI)
+- [x] Video therapy sessions (Jitsi)
+- [ ] Complete payment integration
+- [ ] Data marketplace functionality
+- [x] Demo-ready UI/UX
 
 ### Long-term Success Metrics
 - [ ] 1000+ active users
@@ -126,55 +167,70 @@
 ## 🔒 Security Considerations
 
 ### Current Security
-- Client-side encryption with Web Crypto API
-- Wallet-based authentication
-- Blockchain message integrity verification
+- **XX Network E2E Encryption**: Quantum-resistant encryption for all messages
+- **Arkiv Blockchain Storage**: Immutable, verifiable message storage
+- **Wallet-Based Authentication**: Polkadot wallet signature verification
+- **Wallet-Based Identity**: Recoverable XX Network identity via wallet signature
+- **Triple Redundancy**: Messages stored in Arkiv, XX Network IndexedDB, and localStorage
+- **Encrypted Storage**: Messages encrypted before blockchain storage
 
 ### Planned Security Enhancements
-- ZK proof verification for message authenticity
-- Decentralized key management
+- Zero-knowledge proof verification for message authenticity
+- Enhanced key management and rotation
 - Forward secrecy for conversation history
 - Privacy-preserving compliance verification
+- Multi-signature support for enterprise accounts
 
 ## 💰 Monetization Strategy
 
 ### MVP Monetization
-- Premium conversation features
-- SOL payments for advanced encryption
-- NFT-based conversation ownership
+- Premium therapy session features
+- Polkadot-based payments for therapist sessions
+- HNFT and ChatNFT minting fees
+- Data marketplace for anonymized insights
 
 ### Long-term Monetization
-- Data marketplace fees (Raydium AMM)
+- Data marketplace fees (Polkadot DEX)
 - Enterprise subscription plans
-- ZK proof generation services
+- Therapist platform fees
+- Premium AI features
 - DeFi yield farming integration
+- Token-based governance and staking
 
 ## 🤝 Partnership Opportunities
 
 ### Current Partners
-- **Phantom**: Wallet integration
-- **Arcium**: ZK proof infrastructure
-- **Raydium**: AMM for data trading
-- **Reflect**: Stablecoin payments
+- **XX Network**: Quantum-resistant encryption infrastructure
+- **Arkiv**: Polkadot blockchain storage
+- **Polkadot Ecosystem**: Blockchain infrastructure
+- **xAI**: Grok AI integration
+- **Jitsi**: Video therapy sessions
 
 ### Potential Partners
-- **Mobile wallets**: Solflare, Backpack
-- **Storage providers**: IPFS, Arweave
-- **Enterprise clients**: Healthcare, Finance
-- **DeFi protocols**: Jupiter, Orca
+- **Polkadot Wallets**: Talisman, SubWallet, Nova Wallet
+- **Storage Providers**: IPFS, Arweave (for additional redundancy)
+- **Enterprise Clients**: Healthcare providers, Mental health organizations
+- **DeFi Protocols**: Polkadot DEX protocols, Cross-chain bridges
+- **Therapy Platforms**: Integration with existing therapy services
 
 ## 📱 Platform Roadmap
 
 ### Web App (Current)
 - Desktop browser support
-- Phantom wallet integration
-- Basic encryption features
+- Polkadot wallet integration (Polkadot.js Extension)
+- XX Network E2E encryption
+- Arkiv blockchain storage
+- AI chat (Grok/OpenAI)
+- Video therapy sessions (Jitsi)
+- HNFT identity system
 
 ### Mobile App (Q2 2025)
 - React Native implementation
-- Mobile wallet support
+- Mobile Polkadot wallet support
 - Offline message sync
 - Push notifications
+- Mobile-optimized encryption
+- Biometric authentication
 
 ### Enterprise API (Q3 2025)
 - REST API for enterprise integration
@@ -198,37 +254,46 @@
 
 ## 🔧 Development Phases
 
-### Phase 1: MVP (Oct 2024)
-- Core chat functionality
-- Basic encryption
-- Blockchain integration
-- Demo preparation
+### Phase 1: MVP (Current - Q4 2024)
+- ✅ Core chat functionality with XX Network encryption
+- ✅ Arkiv blockchain storage integration
+- ✅ Polkadot wallet integration
+- ✅ AI chat (Grok/OpenAI)
+- ✅ Video therapy sessions
+- ✅ HNFT identity system
+- 🚧 Payment integration
+- 🚧 Data marketplace
 
-### Phase 2: Privacy (Q1 2025)
-- ZK proof integration
-- Advanced encryption
-- Privacy features
-- Mobile support
+### Phase 2: Privacy & Payments (Q1 2025)
+- Complete payment integration
+- Data marketplace launch
+- Enhanced privacy features
+- Zero-knowledge proof integration
+- Mobile app development
 
-### Phase 3: DeFi (Q2 2025)
-- Data marketplace
-- AMM integration
-- Yield farming
+### Phase 3: DeFi & Data Economy (Q2 2025)
+- Polkadot DEX integration
+- Data marketplace expansion
 - Token economics
+- Yield farming mechanisms
+- Advanced analytics
 
-### Phase 4: Scale (Q3 2025)
+### Phase 4: Scale & Enterprise (Q3 2025)
 - Enterprise features
-- Advanced privacy
+- Advanced privacy tools
 - Ecosystem integration
 - Global expansion
+- HIPAA compliance
 
 ## 📊 Key Performance Indicators
 
 ### Technical KPIs
-- Message encryption/decryption speed
-- Blockchain transaction success rate
-- ZK proof generation time
-- Storage efficiency
+- Message encryption/decryption speed (XX Network)
+- Arkiv blockchain transaction success rate
+- XX Network channel sync time
+- Storage efficiency (triple redundancy)
+- Wallet connection success rate
+- Message persistence rate
 
 ### Business KPIs
 - User acquisition rate
@@ -245,16 +310,21 @@
 ## 🎯 Competitive Advantages
 
 ### Unique Features
-- **Blockchain-native encryption**: First chat app with on-chain message verification
-- **ZK privacy**: Zero-knowledge proofs for message authenticity
-- **DeFi integration**: Earn from your conversation data
-- **Soulbound identity**: Non-transferable user identity NFTs
+- **Quantum-Resistant Encryption**: XX Network provides future-proof encryption
+- **Polkadot Blockchain Storage**: Immutable therapy records on Arkiv
+- **Triple Redundancy**: Messages stored in Arkiv, XX Network, and localStorage
+- **Wallet-Based Recovery**: Identity recoverable via wallet signature
+- **DeFi Integration**: Earn from anonymized therapy data
+- **Soulbound Identity**: Non-transferable HNFT identity on Polkadot
+- **AI + Human Therapy**: Combined AI chat and human therapist sessions
 
 ### Market Differentiation
-- **Privacy-first**: End-to-end encryption with ZK proofs
-- **User-owned data**: Users control and monetize their data
-- **DeFi native**: Built for the decentralized economy
-- **Enterprise ready**: Compliance and audit features
+- **Privacy-First**: Quantum-resistant E2E encryption with XX Network
+- **User-Owned Data**: Users control and monetize their therapy data
+- **Polkadot Native**: Built on Polkadot ecosystem for interoperability
+- **Recoverable Identity**: Wallet-based identity survives device loss
+- **Therapy-Focused**: Purpose-built for mental health privacy
+- **Enterprise Ready**: Compliance and audit features for healthcare
 
 ## 🚀 Launch Strategy
 

@@ -24,8 +24,6 @@ import {
   HiChartBar,
   HiUser
 } from 'react-icons/hi';
-import { FaGlobe } from 'react-icons/fa';
-import { useRouter } from 'next/router';
 
 // Section Components
 import {
@@ -41,7 +39,6 @@ import {
 
 export default function Home() {
   const { isConnected: connected, connect } = usePolkadotWallet();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'home' | 'chat' | 'videochat' | 'marketplace' | 'dashboard' | 'profile'>('home');
   const [mounted, setMounted] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -256,7 +253,6 @@ export default function Home() {
               { icon: <HiVideoCamera className="text-emerald-400" size={24} />, label: 'Video', onClick: () => setActiveTab('videochat') },
               { icon: <HiShoppingBag className="text-purple-400" size={24} />, label: 'Marketplace', onClick: () => setActiveTab('marketplace') },
               { icon: <HiChartBar className="text-blue-400" size={24} />, label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
-              { icon: <FaGlobe className="text-cyan-400" size={24} />, label: 'Fractales', onClick: () => router.push('/fractales') },
               { icon: <HiUser className="text-orange-400" size={24} />, label: 'Profile', onClick: () => setActiveTab('profile') },
             ]}
             panelHeight={68}
@@ -390,9 +386,9 @@ export default function Home() {
                         <ClientWalletButton />
                       </div>
                       <div className="text-green-300/70 text-sm">
-                        🔒 Your data is encrypted with Arcium ZK proofs<br/>
-                        💰 Earn from data marketplace via Raydium AMM<br/>
-                        🚀 Auto-compound earnings with Reflect $rUSD
+                        🔒 Your data is encrypted with XX Network E2E encryption<br/>
+                        💰 Earn from data marketplace via Polkadot DEX<br/>
+                        🚀 Auto-compound earnings with Polkadot payments
                       </div>
                     </div>
                   </div>
@@ -502,11 +498,11 @@ export default function Home() {
             {/* Content */}
             <div className="relative z-10 p-6 text-center text-white/80 text-sm">
               <p>
-                •Built for Cypherpunk Colosseum • MotusDAO • 
-                <span className="text-green-400"> Phantom</span> • 
-                <span className="text-blue-400"> Arcium</span> • 
-                <span className="text-purple-400"> Raydium</span> • 
-                <span className="text-green-400"> Reflect</span>
+                •Built for Polkadot Sub Zero • MotusDAO • 
+                <span className="text-green-400"> XX Network</span> • 
+                <span className="text-blue-400"> Arkiv</span> • 
+                <span className="text-purple-400"> Kusama</span> • 
+                <span className="text-green-400"> Polkadot</span>
               </p>
             </div>
 

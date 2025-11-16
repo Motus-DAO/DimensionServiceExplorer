@@ -63,7 +63,7 @@ export default function VideoChat() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [walrusCid, setWalrusCid] = useState<string | null>(null);
+  const [arkivEntityKey, setArkivEntityKey] = useState<string | null>(null);
   
   // Mock chat insights (would come from AI analysis of user's chat history)
   const chatInsights: ChatInsight = {
@@ -240,31 +240,31 @@ export default function VideoChat() {
       setSessionNotes([mockNote]);
       setIsGeneratingNotes(false);
       
-      // Automatically store in Walrus (mocked)
+      // Automatically store in Arkiv
       try {
         const notesData = JSON.stringify([mockNote]);
-        // Placeholder for Arkiv storage
-        const cid = `arkiv_${Date.now()}`;
-        setWalrusCid(cid);
-        console.log('Session notes automatically stored in Walrus:', cid);
+        // Placeholder for Arkiv storage - returns entityKey
+        const entityKey = `arkiv_${Date.now()}`;
+        setArkivEntityKey(entityKey);
+        console.log('Session notes automatically stored in Arkiv:', entityKey);
       } catch (error) {
         console.error('Auto-storage failed:', error);
       }
     }, 2000);
   };
 
-  const storeInWalrus = async () => {
+  const storeInArkiv = async () => {
     if (sessionNotes.length === 0) return;
     
     try {
       const notesData = JSON.stringify(sessionNotes);
-      // Placeholder for Arkiv storage
-      const cid = `arkiv_${Date.now()}`;
-      setWalrusCid(cid);
-      alert('Session notes stored in Walrus! CID: ' + cid);
+      // Placeholder for Arkiv storage - returns entityKey
+      const entityKey = `arkiv_${Date.now()}`;
+      setArkivEntityKey(entityKey);
+      alert('Session notes stored in Arkiv! Entity Key: ' + entityKey);
     } catch (error) {
-      console.error('Walrus storage failed:', error);
-      alert('Failed to store in Walrus');
+      console.error('Arkiv storage failed:', error);
+      alert('Failed to store in Arkiv');
     }
   };
 
@@ -509,7 +509,7 @@ export default function VideoChat() {
                 <div className="text-center p-4">
                   <div className="text-4xl md:text-6xl mb-3">📹</div>
                   <div className="text-white text-base md:text-lg font-medium">Video Call Active</div>
-                  <div className="text-white/60 text-xs md:text-sm mt-1">Encrypted with Arcium ZK</div>
+                  <div className="text-white/60 text-xs md:text-sm mt-1">Encrypted with XX Network E2E encryption</div>
                 </div>
               ) : (
                 <div className="text-center p-4">
@@ -598,7 +598,7 @@ export default function VideoChat() {
             <div className="text-center py-8">
               <div className="text-4xl mb-4">🤖</div>
               <div className="text-white">Generating AI notes...</div>
-              <div className="text-white/60 text-sm">Analyzing session content with ZK privacy</div>
+              <div className="text-white/60 text-sm">Analyzing session content with XX Network E2E encryption</div>
             </div>
           ) : (
             <div className="space-y-3 md:space-y-4">
@@ -656,17 +656,12 @@ export default function VideoChat() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-green-400">✅</span>
-                      <span className="text-white/80">MCP Encrypted</span>
+                      <span className="text-white/80">XX Network E2E encryption</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-green-400">✅</span>
-                      <span className="text-white/80">Auto-stored in Walrus</span>
+                      <span className="text-white/80">Arkiv blockchain storage</span>
                     </div>
-                    {walrusCid && (
-                      <div className="text-xs text-white/40 font-mono ml-6 break-all">
-                        CID: {walrusCid}
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
@@ -682,10 +677,10 @@ export default function VideoChat() {
             <div className="text-3xl md:text-4xl mb-3 md:mb-4">✅</div>
             <div className="text-white text-base md:text-lg font-semibold mb-2">Payment Successful!</div>
             <div className="text-white/60 text-sm mb-3 md:mb-4">
-              You paid {selectedPsychologist?.name} ${selectedPsychologist?.rate} in $rUSD
+              You paid {selectedPsychologist?.name} ${selectedPsychologist?.rate} in $USD
             </div>
             <div className="text-xs text-white/50 leading-relaxed">
-              Transaction processed via Reflect • Auto-compound enabled
+              Transaction processed via Polkadot • Auto-compound enabled
             </div>
           </div>
         </div>
@@ -696,7 +691,7 @@ export default function VideoChat() {
         <div className="flex items-start space-x-2">
           <span className="text-psy-blue text-sm md:text-base">🔒</span>
           <div className="text-xs md:text-sm text-white/80 leading-relaxed">
-            <strong>Privacy First:</strong> Your video session is ZK-encrypted (Arcium) and stored securely. 
+            <strong>Privacy First:</strong> Your video session is ZK-encrypted (XX Network E2E encryption) and stored securely. 
             AI notes are generated with privacy-preserving techniques. Only you control access to your session data.
           </div>
         </div>

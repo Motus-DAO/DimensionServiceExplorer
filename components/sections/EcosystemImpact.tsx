@@ -39,34 +39,34 @@ const EcosystemImpactSection: React.FC = () => {
                   loop={true}
                   items={[
                     {
-                      title: 'Solana',
-                      description: 'Fast & Cheap blockchain',
+                      title: 'Polkadot',
+                      description: 'Interoperable blockchain',
                       id: 1,
                       icon: <span className="text-2xl">🔗</span>
                     },
                     {
-                      title: 'Phantom',
-                      description: 'Wallet integration',
+                      title: 'XX Network',
+                      description: 'Quantum-resistant E2E encryption',
                       id: 2,
-                      icon: <span className="text-2xl">👻</span>
-                    },
-                    {
-                      title: 'Arcium',
-                      description: 'ZK Privacy protection',
-                      id: 3,
                       icon: <span className="text-2xl">🔒</span>
                     },
                     {
-                      title: 'Raydium',
-                      description: 'AMM Trading',
+                      title: 'Arkiv',
+                      description: 'Immutable blockchain storage',
+                      id: 3,
+                      icon: <span className="text-2xl">📦</span>
+                    },
+                    {
+                      title: 'Polkadot DEX',
+                      description: 'Decentralized exchange',
                       id: 4,
                       icon: <span className="text-2xl">🏪</span>
                     },
                     {
-                      title: 'Reflect',
-                      description: '$rUSD Payments',
+                      title: 'xAI Grok',
+                      description: 'AI-powered therapy chat',
                       id: 5,
-                      icon: <span className="text-2xl">💰</span>
+                      icon: <span className="text-2xl">🤖</span>
                     }
                   ]}
                 />

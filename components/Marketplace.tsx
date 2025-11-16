@@ -906,23 +906,23 @@ export default function Marketplace() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="text-center">
             <div className="text-3xl mb-2">🔒</div>
-            <h4 className="text-heading text-h5 text-white mb-2">ZK Privacy</h4>
+            <h4 className="text-heading text-h5 text-white mb-2">Quantum-Resistant Encryption</h4>
             <p className="text-body text-body-sm text-white/70">
-              Data is anonymized with Arcium ZK proofs to protect privacy while proving data integrity.
+              Data is encrypted with XX Network E2E encryption to protect privacy while stored on Arkiv blockchain.
             </p>
           </div>
           <div className="text-center">
             <div className="text-3xl mb-2">🏪</div>
-            <h4 className="text-heading text-h5 text-white mb-2">Raydium AMM</h4>
+            <h4 className="text-heading text-h5 text-white mb-2">Polkadot DEX</h4>
             <p className="text-body text-body-sm text-white/70">
-              Fair pricing and instant liquidity through Raydium's automated market maker.
+              Fair pricing and instant liquidity through Polkadot's decentralized exchange.
             </p>
           </div>
           <div className="text-center">
             <div className="text-3xl mb-2">💰</div>
-            <h4 className="text-heading text-h5 text-white mb-2">$PSY Token Payments</h4>
+            <h4 className="text-heading text-h5 text-white mb-2">Polkadot Payments</h4>
             <p className="text-body text-body-sm text-white/70">
-              Secure payments with $PSY tokens and auto-compound earnings into DeFi yields.
+              Secure payments with Polkadot $PSY native tokens and auto-compound earnings into DeFi yields.
             </p>
           </div>
         </div>
