@@ -37,4 +37,18 @@ contract FractalesNFT is ERC721URIStorage, Ownable {
         _setTokenURI(tokenId, tokenUri);
         return tokenId;
     }
+
+    function publicMintDataURI(string memory name, string memory dataUri) external returns (uint256) {
+        uint256 tokenId = ++nextTokenId;
+        _safeMint(msg.sender, tokenId);
+        string memory json = string(abi.encodePacked(
+            '{"name":"', name, '",',
+            '"description":"Fractales generated image",',
+            '"image":"', dataUri, '"}'
+        ));
+        string memory encoded = Base64.encode(bytes(json));
+        string memory tokenUri = string(abi.encodePacked("data:application/json;base64,", encoded));
+        _setTokenURI(tokenId, tokenUri);
+        return tokenId;
+    }
 }

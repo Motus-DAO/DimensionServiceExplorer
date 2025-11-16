@@ -2,7 +2,7 @@ import React, { createContext, useContext, useRef, useCallback } from 'react'
 
 type FractalCaptureContextType = {
   registerFrame: (name: string, frame: HTMLIFrameElement | null) => void
-  capture: (name: string) => Promise<string>
+  capture: (name: string, opts?: { hq?: boolean; crop?: number }) => Promise<string>
 }
 
 const Ctx = createContext<FractalCaptureContextType | null>(null)
@@ -18,7 +18,7 @@ export const FractalCaptureProvider: React.FC<{ children: React.ReactNode }> = (
     framesRef.current.set(name, frame)
   }, [])
 
-  const capture = useCallback((name: string) => {
+  const capture = useCallback((name: string, opts?: { hq?: boolean; crop?: number }) => {
     return new Promise<string>((resolve, reject) => {
       const frame = framesRef.current.get(name)
       if (!frame || !frame.contentWindow) {
@@ -31,7 +31,7 @@ export const FractalCaptureProvider: React.FC<{ children: React.ReactNode }> = (
         resolve(e.data.dataUrl as string)
       }
       window.addEventListener('message', handler)
-      frame.contentWindow.postMessage({ type: 'fractales-capture', name }, '*')
+      frame.contentWindow.postMessage({ type: 'fractales-capture', name, hq: !!opts?.hq, crop: opts?.crop }, '*')
       setTimeout(() => {
         window.removeEventListener('message', handler)
         reject(new Error('Capture timeout'))
@@ -47,4 +47,3 @@ export const useFractalCapture = () => {
   if (!v) throw new Error('useFractalCapture must be used within FractalCaptureProvider')
   return v
 }
-
