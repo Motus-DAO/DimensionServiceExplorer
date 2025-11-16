@@ -383,4 +383,3 @@ contract FractalesNFT is ERC721URIStorage, Ownable {
 **Contact:** MotusDAO  
 **Demo:** [Your Demo URL]  
 **Repo:** [Your GitHub URL]
-

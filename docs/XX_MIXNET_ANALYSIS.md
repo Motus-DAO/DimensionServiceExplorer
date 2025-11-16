@@ -233,4 +233,3 @@ For your current MVP (AI chat + video sessions), the quantum-resistant encryptio
 ---
 
 **Bottom Line:** You're using cMixx infrastructure and getting quantum-resistant encryption, but not fully leveraging the mixing/anonymization layer that provides "total anonymity" and breaks sender-receiver links. This is fine for your current use case, but could be enhanced if you need stronger anonymity guarantees.
-

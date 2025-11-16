@@ -620,4 +620,3 @@ const messages = await getChannelMessages(channelId);
 **Built with ❤️ for the privacy-first future of mental health**
 
 *PsyChat - Making Privacy Sexy, One Therapy Session at a Time*
-

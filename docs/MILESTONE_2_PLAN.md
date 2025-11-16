@@ -207,4 +207,3 @@ PsyChat is a privacy-first mental health platform that enables users to own thei
 **Built with ❤️ for the cypherpunk future of mental health**
 
 *PsyChat - Own your data, earn from insights, heal the world*
-

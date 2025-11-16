@@ -488,4 +488,3 @@ const volumeByDay = groupBy(allMessages.entities, (m) => {
 ---
 
 **You have a strong foundation! Focus on fixing subscriptions and adding documentation to qualify for the main prize. The TTL micro bounty is also a great opportunity.**
-

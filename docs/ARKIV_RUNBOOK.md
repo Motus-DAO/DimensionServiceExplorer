@@ -421,4 +421,3 @@ Use shorter TTL for temporary data:
 ---
 
 **Questions?** Open an issue or check the Arkiv documentation.
-

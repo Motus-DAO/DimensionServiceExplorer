@@ -93,4 +93,3 @@ NOT:
 - **Format:** Protobuf with embedded JSON
 - **Encoding:** Base64 (for transmission) → Uint8Array (for WASM)
 - **Why Uint8Array?** Go WASM bindings expect binary data, not strings
-

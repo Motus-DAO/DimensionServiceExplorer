@@ -309,4 +309,3 @@ psychat/
 **Built for Arkiv Track - Sub Zero Hackathon**
 
 *PsyChat - Privacy-first mental health platform powered by Arkiv*
-

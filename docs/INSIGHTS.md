@@ -53,7 +53,7 @@
 - **Encryption**: XX Network E2E encryption (quantum-resistant, channel-based)
 - **Storage**: Arkiv (Polkadot blockchain) + XX Network IndexedDB + localStorage cache
 - **Identity**: Wallet-based XX Network identity (recoverable via wallet signature)
-- **NFTs**: HNFTs and ChatNFTs minted on Polkadot (not Solana)
+- **NFTs**: HNFTs and ChatNFTs (UI concept; chain integration forthcoming)
 - **Payment**: Polkadot-based payment system (currently mocked, ready for integration)
 - **AI**: xAI Grok (grok-2-1212) or OpenAI (gpt-4o-mini) via API
 
