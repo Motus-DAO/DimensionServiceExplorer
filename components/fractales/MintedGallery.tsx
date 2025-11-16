@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import { HoloPanel, HoloText, HoloButton } from '../ui/holo';
 import { HiHeart, HiShare, HiCurrencyDollar } from 'react-icons/hi';
 import { usePolkadotWallet } from '../../contexts/PolkadotWalletContext';
-import { fetchAllNFTs, FractalNFT } from '../../lib/fractales-nft';
+import { fetchAllNFTs, FractalNFT, getProvider } from '../../lib/fractales-nft';
 
 interface MintedPhoto {
   id: string;
@@ -51,22 +51,19 @@ export default function MintedGallery() {
     const loadNFTs = async () => {
       setLoading(true);
       try {
-        const contractAddress = process.env.NEXT_PUBLIC_FRACTALES_NFT_ADDRESS;
+        const contractAddress = (process.env.NEXT_PUBLIC_FRACTALES_NFT_ADDRESS || '').trim();
         if (!contractAddress) {
           console.warn('Fractales NFT contract address not configured');
           setLoading(false);
           return;
         }
 
-        // Get provider from MetaMask or injected provider
-        const ethereum = (window as any).ethereum;
-        if (!ethereum) {
-          console.warn('No Ethereum provider found');
+        const provider = getProvider();
+        if (!provider) {
+          console.warn('No provider available');
           setLoading(false);
           return;
         }
-
-        const provider = new ethers.BrowserProvider(ethereum);
         const nfts = await fetchAllNFTs(contractAddress, provider);
 
         // Load likes and tips from localStorage first
@@ -113,7 +110,7 @@ export default function MintedGallery() {
             creatorAddress: nft.owner,
             likes: 0, // Will be loaded from backend in future
             tips: savedTips[nft.tokenId] || 0,
-            mintedAt: new Date().toISOString().split('T')[0], // Could fetch from block timestamp
+            mintedAt: new Date().toISOString().split('T')[0],
             isLiked: savedLikes[nft.tokenId] || false,
           };
         });
@@ -578,4 +575,3 @@ export default function MintedGallery() {
     </div>
   );
 }
-

@@ -51,7 +51,8 @@ export async function fetchAllNFTs(
   provider: ethers.Provider
 ): Promise<FractalNFT[]> {
   try {
-    const contract = new ethers.Contract(contractAddress, FRACTALES_NFT_ABI, provider);
+    const addr = contractAddress.trim();
+    const contract = new ethers.Contract(addr, FRACTALES_NFT_ABI, provider);
     
     // Get total supply
     const nextTokenId = await contract.nextTokenId();
@@ -127,19 +128,17 @@ export async function fetchNFTsByOwner(
  * Get provider for the network
  */
 export function getProvider(): ethers.Provider | null {
-  if (typeof window === 'undefined') return null;
-  
-  // Try to get from MetaMask or other injected provider
-  const ethereum = (window as any).ethereum;
-  if (ethereum) {
-    return new ethers.BrowserProvider(ethereum);
+  const rpcUrl = (process.env.NEXT_PUBLIC_EVM_RPC_URL || 'https://testnet-passet-hub-eth-rpc.polkadot.io').trim();
+  try {
+    const rpc = new ethers.JsonRpcProvider(rpcUrl);
+    return rpc;
+  } catch {}
+
+  if (typeof window !== 'undefined') {
+    const ethereum = (window as any).ethereum;
+    if (ethereum) {
+      return new ethers.BrowserProvider(ethereum);
+    }
   }
-  
-  // Fallback to public RPC (adjust for your network)
-  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://rpc.polkadot.io';
-  // Note: This won't work directly for Polkadot, you'd need a different provider
-  // For now, we'll rely on injected provider
-  
   return null;
 }
-

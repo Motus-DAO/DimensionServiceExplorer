@@ -1,24 +1,24 @@
+'use client'
+
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import PageGridDistortion from '../../components/PageGridDistortion'
-import { HoloPanel, HoloText, HoloButton } from '../../components/ui/holo'
 import MintedGallery from '../../components/fractales/MintedGallery'
 import Dock from '../../components/Dock'
 import ClientWalletButton from '../../components/ClientWalletButton'
+import { HoloText } from '../../components/ui/holo'
 import { 
-  HiHome, 
-  HiChat, 
-  HiVideoCamera, 
-  HiShoppingBag, 
+  HiHome,
+  HiChat,
+  HiVideoCamera,
+  HiShoppingBag,
   HiChartBar,
   HiUser,
   HiPhotograph
 } from 'react-icons/hi'
 
-const names = ['brainmelt','cosmic','entropy','glitchy','iterate','jazzdimension','matrixchat','neuroreality','planet','psyched','quantum','ripples','transform']
-
-export default function FractalesIndex() {
+export default function FractalesGalleryPage() {
   const router = useRouter()
   const [isDockVisible, setIsDockVisible] = useState(true)
 
@@ -58,7 +58,7 @@ export default function FractalesIndex() {
                 <button
                   onClick={() => setIsDockVisible(!isDockVisible)}
                   className="flex items-center justify-center w-10 h-10 rounded-lg bg-black/40 border border-cyan-400 hover:bg-black/60 transition-colors shadow-[0_0_10px_rgba(0,255,255,0.3)] hover:shadow-[0_0_15px_rgba(0,255,255,0.5)]"
-                  title={isDockVisible ? "Hide Navigation" : "Show Navigation"}
+                  title={isDockVisible ? 'Hide Navigation' : 'Show Navigation'}
                 >
                   <div className="w-4 h-4 flex flex-col justify-center space-y-1">
                     <div className={`w-full h-0.5 bg-cyan-400 transition-all duration-300 ${isDockVisible ? 'rotate-45 translate-y-1' : ''}`} />
@@ -69,21 +69,6 @@ export default function FractalesIndex() {
 
                 {/* Compact Holo Container */}
                 <div className="relative overflow-hidden rounded-lg crystal-glass crystal-glass-hover refraction-overlay transition-all duration-300 border-cyan-400/20 shadow-[0_0_20px_rgba(0,255,255,0.1)] crystal-panel crystal-layer-2">
-                  {/* Geometric overlay */}
-                  <div className="geometric-overlay" />
-
-                  {/* Crystal corner accents */}
-                  <div className="crystal-corner-tl" />
-                  <div className="crystal-corner-tr" />
-                  <div className="crystal-corner-bl" />
-                  <div className="crystal-corner-br" />
-
-                  {/* Sharp geometric lines */}
-                  <div className="absolute top-0 left-1/4 right-1/4 h-0.5 crystal-line" />
-                  <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 crystal-line-magenta" />
-                  <div className="absolute left-0 top-1/4 bottom-1/4 w-0.5 crystal-line-purple" />
-                  <div className="absolute right-0 top-1/4 bottom-1/4 w-0.5 crystal-line" />
-
                   {/* Content */}
                   <div className="relative z-10 px-3 py-2">
                     <Link 
@@ -92,18 +77,12 @@ export default function FractalesIndex() {
                     >
                       <h1 
                         className="text-lg font-bold tracking-wider psychat-neon relative"
-                        style={{ 
-                          fontFamily: 'Orbitron, monospace'
-                        }}
+                        style={{ fontFamily: 'Orbitron, monospace' }}
                       >
                         <span className="relative z-10">PsyChat</span>
-                        {/* Neon glow effect */}
                         <span 
                           className="absolute inset-0 text-lg font-bold tracking-wider opacity-40 blur-sm group-hover:opacity-60 transition-opacity duration-300"
-                          style={{ 
-                            fontFamily: 'Orbitron, monospace',
-                            color: 'rgba(0, 255, 255, 0.5)'
-                          }}
+                          style={{ color: 'rgba(0, 255, 255, 0.5)', fontFamily: 'Orbitron, monospace' }}
                         >
                           PsyChat
                         </span>
@@ -111,12 +90,10 @@ export default function FractalesIndex() {
                       <span className="text-xs text-white/70 group-hover:text-cyan-300 transition-colors duration-300">by MotusDAO</span>
                     </Link>
                   </div>
-
-                  {/* Crystal scan line effect */}
                   <div className="absolute inset-0 crystal-grid animate-[holographic-scan_6s_linear_infinite]" />
                 </div>
               </div>
-              
+
               {/* Wallet Button */}
               <div className="pr-4">
                 <ClientWalletButton />
@@ -126,74 +103,17 @@ export default function FractalesIndex() {
         </header>
 
         <div className={`relative z-10 max-w-6xl mx-auto px-6 py-24 transition-all duration-300 ${
-          isDockVisible 
-            ? 'pl-24 md:pl-24' 
-            : 'pl-4 md:pl-24'
+          isDockVisible ? 'pl-24 md:pl-24' : 'pl-4 md:pl-24'
         }`}>
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <HoloText size="xl" weight="bold">Fractales</HoloText>
-            <HoloText size="sm" weight="normal" className="text-white/70">Explore and relax your mind with Dimension Service Explorer. Mint, share and earn from your favorite fractals.</HoloText>
+          <div className="mb-8">
+            <HoloText size="xl" weight="bold">Fractales Gallery</HoloText>
+            <HoloText size="sm" weight="normal" className="text-white/70">All minted fractals on Polkadot Hub Testnet</HoloText>
           </div>
-          <Link href="/fractales/gallery">
-            <HoloButton variant="primary" size="sm">View Gallery</HoloButton>
-          </Link>
+
+          <MintedGallery />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {names.map((name) => (
-            <Link key={name} href={`/fractales/${name}`}>
-              <div className="cursor-pointer">
-                <HoloPanel variant="elevated" size="lg" className="p-6 hover:bg-cyan-500/10 transition-colors">
-                  <HoloText size="base" weight="normal" className="text-cyan-400 capitalize">{name}</HoloText>
-                  <div className="text-white/60 text-sm mt-2">Open fractal</div>
-                </HoloPanel>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Minted Gallery Section */}
-        <MintedGallery />
-      </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 p-4 mt-16 pb-8">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="relative overflow-hidden rounded-2xl crystal-glass crystal-glass-hover refraction-overlay transition-all duration-300 border-cyan-400/20 shadow-[0_0_20px_rgba(0,255,255,0.1)] crystal-panel crystal-layer-2">
-            {/* Geometric overlay */}
-            <div className="geometric-overlay" />
-
-            {/* Crystal corner accents */}
-            <div className="crystal-corner-tl" />
-            <div className="crystal-corner-tr" />
-            <div className="crystal-corner-bl" />
-            <div className="crystal-corner-br" />
-
-            {/* Sharp geometric lines */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-0.5 crystal-line" />
-            <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 crystal-line-magenta" />
-            <div className="absolute left-0 top-1/4 bottom-1/4 w-0.5 crystal-line-purple" />
-            <div className="absolute right-0 top-1/4 bottom-1/4 w-0.5 crystal-line" />
-
-            {/* Content */}
-            <div className="relative z-10 p-6 text-center">
-              <HoloText size="lg" weight="bold" className="text-cyan-400 mb-2">
-                EXPECT CHAOS
-              </HoloText>
-              <p className="text-white/60 text-sm">
-                Built for Polkadot Sub Zero • MotusDAO • 
-                <span className="text-green-400"> XX Network</span> • 
-                <span className="text-blue-400"> Arkiv</span> • 
-                <span className="text-purple-400"> Kusama</span>
-              </p>
-            </div>
-
-            {/* Crystal scan line effect */}
-            <div className="absolute inset-0 crystal-grid animate-[holographic-scan_6s_linear_infinite]" />
-          </div>
-        </div>
-      </footer>
       </main>
     </>
   )
 }
+
