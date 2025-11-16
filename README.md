@@ -90,9 +90,11 @@ utils/
 
 ### Prerequisites
 - Node.js 18+
-- Polkadot.js API
-- Polkadot wallet extension (Polkadot.js, Talisman, or SubWallet)
+- **Polkadot wallet extension** (Polkadot.js, Talisman, or SubWallet) - Required for main app features
+- **MetaMask** - Required for Kusama/Fractales NFT gallery (EVM-compatible)
 - OpenAI or xAI Grok API key
+
+> **📖 New to PsyChat?** See the [How to Use PsyChat](#-how-to-use-psychat) section below for detailed step-by-step instructions on wallet setup, identity minting, and using all features.
 
 ### Installation
 
@@ -141,6 +143,185 @@ http://localhost:3000
 - In Chat, use the AI Provider dropdown to select OpenAI or xAI Grok.
 - Models: examples `gpt-4o-mini`, `gpt-4o` (OpenAI) or `grok-4` (xAI).
 - The backend auto-selects OpenAI if `OPENAI_API_KEY` is set; otherwise uses xAI if `XAI_API_KEY` is present.
+
+## 📖 How to Use PsyChat
+
+This guide will walk you through using PsyChat step-by-step, from wallet setup to interacting with all features.
+
+### Step 1: Install Polkadot Wallet Extension
+
+**Why you need a Polkadot wallet:**
+PsyChat is built on the Polkadot ecosystem and requires a Polkadot-compatible wallet to:
+- Connect your identity to the blockchain
+- Mint your Human NFT (HNFT) identity
+- Sign transactions for storing data on Arkiv
+- Enable XX Network encryption (uses wallet signature for identity)
+- Interact with Polkadot-based features
+
+**Supported wallets:**
+- **Polkadot.js Extension** (recommended): [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd)
+- **Talisman Wallet**: [Install from talisman.xyz](https://www.talisman.xyz/)
+- **SubWallet**: [Install from subwallet.app](https://subwallet.app/)
+
+**Setup instructions:**
+1. Install one of the wallet extensions above
+2. Create a new account or import an existing one
+3. Make sure your account is unlocked and ready to sign transactions
+4. You can use any Polkadot network (Polkadot, Kusama, or Westend testnet)
+
+### Step 2: Connect Wallet and Mint Your Identity
+
+**What is Identity Minting?**
+Identity minting creates a **soulbound Human NFT (HNFT)** that represents your unique identity on PsyChat. This NFT:
+- Is non-transferable (soulbound to your wallet)
+- Acts as your digital identity for therapy sessions
+- Enables you to own and control your mental health data
+- Is required before you can start chatting
+
+**How to mint your identity:**
+1. Open PsyChat in your browser (`http://localhost:3000` or the deployed URL)
+2. Click the **"Connect Wallet"** button in the top right
+3. Select your Polkadot wallet extension (Polkadot.js, Talisman, or SubWallet)
+4. Choose an account from your wallet
+5. Approve the connection request
+6. Once connected, navigate to the **Chat** tab
+7. You'll see an **"Mint Identity HNFT"** button - click it
+8. Approve the transaction in your wallet (this may take a few moments)
+9. Wait for confirmation - you'll see a success message when your identity is created
+10. You can now start chatting!
+
+**Note:** You only need to mint your identity once per wallet. After minting, your identity persists across sessions.
+
+### Step 3: Start Chatting and Data Analysis
+
+**How data analysis works:**
+As you chat with the AI therapist, PsyChat automatically:
+- **Encrypts messages** using XX Network's quantum-resistant encryption
+- **Stores messages** on Arkiv blockchain (decentralized storage)
+- **Analyzes sentiment** in real-time (positive, negative, or neutral)
+- **Extracts topics** from your conversations (keyword analysis)
+- **Tracks session duration** and message counts
+- **Generates insights** based on conversation patterns
+
+**To start a therapy session:**
+1. After minting your identity, you'll see the chat interface
+2. Type a message in the input field (e.g., "I've been feeling anxious lately")
+3. Press Enter or click Send
+4. Your message is:
+   - Encrypted with XX Network
+   - Sent to the AI (OpenAI or xAI Grok)
+   - Stored on Arkiv blockchain
+5. The AI responds with therapeutic guidance
+6. Continue the conversation - all messages are automatically encrypted and stored
+7. View session analytics in the chat interface (duration, topics, sentiment)
+
+**Data ownership:**
+- All your messages are encrypted and stored on-chain via Arkiv
+- You own your data through your HNFT identity
+- Messages are linked to your wallet address
+- You can end a session to create a session summary NFT
+
+### Step 4: Kusama Experience - Fractales NFT Gallery
+
+**What is the Kusama experience?**
+The Fractales feature lets you create, mint, and display generative art NFTs on Paseo's testnet. This showcases PsyChat's integration with Kusama's experimental art layer.
+
+**Why you need MetaMask:**
+The Fractales feature uses **EVM-compatible contracts** deployed on Polkadot Hub Testnet, which requires an Ethereum-compatible wallet like MetaMask (not Polkadot.js).
+
+**Setup MetaMask for Kusama Testnet:**
+
+1. **Install MetaMask** (if you don't have it):
+   - [Install from metamask.io](https://metamask.io/download/)
+
+2. **Add Polkadot Hub Testnet to MetaMask:**
+   - Open MetaMask
+   - Click the network dropdown (top of extension)
+   - Click "Add Network" or "Add a network manually"
+   - Enter the following details:
+     ```
+     Network Name: Polkadot Hub TestNet
+     RPC URL: https://testnet-passet-hub-eth-rpc.polkadot.io
+     Chain ID: 0x190f1b46 (or 421614550 in decimal)
+     Currency Symbol: PAS
+     Block Explorer: https://blockscout-passet-hub.parity-testnet.parity.io/
+     ```
+   - Click "Save"
+
+3. **Switch to Polkadot Hub TestNet:**
+   - Select "Polkadot Hub TestNet" from the network dropdown
+
+4. **Get test tokens (PAS):**
+   - You'll need PAS tokens to pay for gas fees when minting NFTs
+   - The app will prompt you to connect MetaMask when you visit the Fractales gallery
+   - If you need test tokens, check the Polkadot Hub Testnet faucet or contact the team
+
+**Using Fractales:**
+1. Navigate to the **Fractales** section (via the navigation dock or `/fractales` route)
+2. Browse available fractal generators (brainmelt, cosmic, entropy, etc.)
+3. Click on a fractal to open it
+4. Interact with the fractal (adjust parameters, generate new patterns)
+5. Click **"Capture Screen"** to save your fractal as an image
+6. Click **"Mint NFT"** to create an NFT on Kusama testnet
+7. Approve the transaction in MetaMask (make sure you're on Polkadot Hub TestNet)
+8. Wait for confirmation - your NFT will appear in the Minted Gallery
+
+**Important notes:**
+- Fractales uses **MetaMask** (EVM wallet), not Polkadot.js
+- You must be on **Polkadot Hub TestNet** (not mainnet)
+- You need **PAS test tokens** for gas fees
+- NFTs are minted as ERC721 tokens on the testnet
+
+### Step 5: Complete User Flow Summary
+
+**Full workflow for judges:**
+
+1. **Setup (one-time):**
+   - Install Polkadot.js Extension (or Talisman/SubWallet)
+   - Install MetaMask (for Fractales)
+   - Add Polkadot Hub TestNet to MetaMask
+   - Get test tokens if needed
+
+2. **Main PsyChat experience:**
+   - Connect Polkadot wallet → Mint HNFT identity → Start chatting
+   - Messages are encrypted (XX Network) and stored (Arkiv)
+   - Data is analyzed automatically (sentiment, topics, insights)
+   - End session to create session summary
+
+3. **Kusama/Fractales experience:**
+   - Switch to MetaMask
+   - Ensure you're on Polkadot Hub TestNet
+   - Navigate to Fractales gallery
+   - Generate and mint art NFTs
+
+**Quick test checklist:**
+- ✅ Polkadot wallet connected
+- ✅ HNFT identity minted
+- ✅ Chat messages encrypted and stored
+- ✅ Data analysis visible (sentiment, topics)
+- ✅ MetaMask connected to Polkadot Hub TestNet
+- ✅ Fractales NFT minted successfully
+
+### Troubleshooting
+
+**Wallet connection issues:**
+- Make sure the wallet extension is unlocked
+- Refresh the page and try connecting again
+- Check that you've approved the connection request
+
+**Identity minting fails:**
+- Ensure your wallet has enough balance for transaction fees
+- Check that you're connected to a supported network (Polkadot/Kusama/Westend)
+- Try refreshing and reconnecting your wallet
+
+**MetaMask not connecting:**
+- Verify you're on Polkadot Hub TestNet (not mainnet)
+- Check that the network is added correctly (Chain ID: 0x190f1b46)
+- Make sure MetaMask is unlocked
+
+**No test tokens:**
+- Contact the team for testnet faucet information
+- Check the Polkadot Hub Testnet block explorer for faucet links
 
 ## 🔧 Ecosystem Integrations
 
