@@ -12,6 +12,7 @@ out/
 # Production builds
 build/
 dist/
+!public/xxdk-wasm/dist/
 
 # Environment variables
 .env
