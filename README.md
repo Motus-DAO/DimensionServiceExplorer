@@ -163,15 +163,29 @@ const decrypted = await XXNetworkIntegration.decryptMessage(encrypted, userId);
 - **Decentralized storage for therapy records**
 - **Immutable data storage**
 - **Content addressing for data integrity**
+- **Real-time subscriptions** for live message updates
+- **Strategic TTL design** for cost-efficient ephemeral data
+
+**Arkiv Track Submission:**
+- 📄 [ARKIV_SUBMISSION.md](./ARKIV_SUBMISSION.md) - Complete submission documentation
+- 📖 [ARKIV_RUNBOOK.md](./ARKIV_RUNBOOK.md) - Setup and troubleshooting guide
+- 💡 [ARKIV_FRICTION_POINTS.md](./ARKIV_FRICTION_POINTS.md) - Developer experience feedback
 
 ```typescript
-import { ArkivIntegration } from './utils/polkadotIntegrations';
+import { useArkiv } from '@/contexts/ArkivContext';
+import { useArkivChat } from '@/lib/hooks/useArkivChat';
 
-// Store therapy record on Arkiv
-const storageId = await ArkivIntegration.storeRecord(therapyData);
+// Store therapy message on Arkiv
+const arkivChat = useArkivChat(polkadotAddress);
+const receipt = await arkivChat.storeMessage(sessionId, 'user', 'Hello!');
 
-// Retrieve stored record
-const record = await ArkivIntegration.retrieveRecord(storageId);
+// Query messages with TTL expiration
+const messages = await arkivChat.getMessagesForSession(sessionId);
+
+// Subscribe to real-time updates
+const unsubscribe = arkivChat.subscribeMessages(sessionId, (entity) => {
+  console.log('New message:', entity);
+});
 ```
 
 ### Hyperbridge (Cross-Chain Integration)
