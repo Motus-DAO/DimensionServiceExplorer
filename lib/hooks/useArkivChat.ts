@@ -4,7 +4,7 @@ import { stringToPayload } from '@arkiv-network/sdk/utils';
 type Role = 'user' | 'assistant';
 
 export function useArkivChat(polkadotAddress: string | null) {
-  const { ensureChatBase, deriveChatBaseKey, mutateEntities, queryEntities, createEntity } = useArkiv();
+  const { ensureChatBase, deriveChatBaseKey, mutateEntities, queryEntities, createEntity, publicClient, eq } = useArkiv();
 
   const ensureBase = async () => {
     if (!polkadotAddress) return '';
@@ -20,6 +20,7 @@ export function useArkivChat(polkadotAddress: string | null) {
       { key: 'chatBaseKey', value: baseKey },
       { key: 'sessionId', value: sessionId },
       { key: 'role', value: role },
+      { key: 'ts', value: String(Date.now()) },
     ];
     return createEntity({ payload: stringToPayload(text), contentType: 'text/plain', attributes, expiresIn: 600 });
   };
@@ -59,6 +60,32 @@ export function useArkivChat(polkadotAddress: string | null) {
     ]);
   };
 
+  const subscribeMessages = (sessionId: string, onMessage: (entity: any) => void) => {
+    if (!polkadotAddress) return () => {};
+    const predicates = [eq('type', 'chatMessage'), eq('polkadotAddress', polkadotAddress), eq('sessionId', sessionId)];
+    const pc: any = publicClient;
+    if (pc && typeof pc.subscribe === 'function') {
+      const sub = pc.subscribe({ where: predicates }, (e: any) => {
+        try { if (e && e.entity) onMessage(e.entity); } catch {}
+      });
+      return () => { try { sub?.unsubscribe?.(); } catch {} };
+    }
+    let lastKeys = new Set<string>();
+    let stopped = false;
+    const interval = setInterval(async () => {
+      if (stopped) return;
+      const res = await getMessagesForSession(sessionId);
+      for (const ent of res.entities || []) {
+        const k = ent.entityKey || ent.key || '';
+        if (!lastKeys.has(k)) {
+          lastKeys.add(k);
+          onMessage(ent);
+        }
+      }
+    }, 2000);
+    return () => { stopped = true; clearInterval(interval); };
+  };
+
   // Store XX Network DM identity in Arkiv
   const storeXXIdentity = async (xxDmIdentityBase64: string) => {
     if (!polkadotAddress) return { entityKey: '' };
@@ -93,5 +120,5 @@ export function useArkivChat(polkadotAddress: string | null) {
     return null;
   };
 
-  return { ensureBase, storeMessage, storeSession, getSessions, getMessagesForSession, storeXXIdentity, getXXIdentity };
+  return { ensureBase, storeMessage, storeSession, getSessions, getMessagesForSession, storeXXIdentity, getXXIdentity, subscribeMessages };
 }

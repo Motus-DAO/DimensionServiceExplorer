@@ -2,6 +2,9 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { usePolkadotWallet } from './PolkadotWalletContext';
 
+let __xxInitOnce = false;
+let __xxInitInProgress = false;
+
 // Standalone functions to interact with Arkiv without hooks
 async function loadXXIdentityFromArkiv(walletAddress: string): Promise<string | null> {
   try {
@@ -87,6 +90,12 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     const init = async () => {
       try {
+        if (__xxInitOnce && dmClientRef.current) {
+          setReady(true);
+          return;
+        }
+        if (__xxInitInProgress) return;
+        __xxInitInProgress = true;
         try { console.log('[XX] Init start', { hasWindow: typeof window !== 'undefined' }); } catch {}
         let xxdk: any = null;
         try {
@@ -292,6 +301,7 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
           { EventUpdate: onDmEvent }
         );
         dmClientRef.current = client;
+        __xxInitOnce = true;
         try {
           const pkB64 = Buffer.from(client.GetPublicKey()).toString('base64');
           const tok = String(client.GetToken());
@@ -308,9 +318,25 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
         try { console.log('[XX] Init finished'); } catch {}
       } catch (e) {
         try { console.error('[XX] Init error', e); } catch {}
+        try {
+          const msg = String((e as any)?.message || e);
+          if (msg.includes('Go program has already exited')) {
+            setReady(!!dmClientRef.current);
+            __xxInitInProgress = false;
+            return;
+          }
+        } catch {}
         // Clear initialization flag on error to allow retry
-        if (typeof window !== 'undefined') window.localStorage.removeItem('cMixInitialized');
+        try {
+          if (typeof window !== 'undefined') {
+            const safeAddr = (walletAddress || 'default').replace(/[^a-zA-Z0-9_-]/g, '').slice(-12);
+            const statePath = `xx_${safeAddr}`;
+            window.localStorage.removeItem(`cMixInit_${statePath}`);
+          }
+        } catch {}
         setReady(false);
+      } finally {
+        __xxInitInProgress = false;
       }
     };
     init();

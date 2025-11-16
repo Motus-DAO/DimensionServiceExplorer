@@ -70,6 +70,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
   } = useXXNetwork() as any;
   
   const [messages, setMessages] = useState<Message[]>([]);
+  const seenKeysRef = useRef<Set<string>>(new Set());
   const [inputText, setInputText] = useState('');
   const [isEncrypting, setIsEncrypting] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
@@ -96,8 +97,13 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
   const [isChatNFTListExpanded, setIsChatNFTListExpanded] = useState(false);
   const [isChatNFTVisible, setIsChatNFTVisible] = useState(true);
   const [txCount, setTxCount] = useState(0);
-  // Use wallet address as session ID - deterministic and persistent
-  const activeSessionId = walletAddress ? `session_${walletAddress}` : `session_${Date.now()}`;
+  const [activeSessionId, setActiveSessionId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const s = window.localStorage.getItem('psychat_active_session');
+      if (s) return s;
+    }
+    return walletAddress ? `session_${walletAddress}` : `session_${Date.now()}`;
+  });
   
   // XX Network channel state
   const [xxChannelId, setXXChannelId] = useState<string | null>(null);
@@ -135,15 +141,33 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
   }, [xxReady]);
 
   useEffect(() => {
+    if (!walletAddress) return;
+    const s = `session_${walletAddress}`;
+    if (activeSessionId !== s) {
+      setActiveSessionId(s);
+      try { window.localStorage.setItem('psychat_active_session', s); } catch {}
+    }
+  }, [walletAddress]);
+
+  useEffect(() => {
     if (!walletAddress || !activeSessionId) return;
     const loadHistory = async () => {
       try {
         console.log('[Chat] Starting loadHistory', { walletAddress, activeSessionId, arkivSdkReady });
+        try {
+          const cacheRaw = typeof window !== 'undefined' ? window.localStorage.getItem(`arkiv_cache_${activeSessionId}`) : null;
+          if (cacheRaw) {
+            const cached = JSON.parse(cacheRaw);
+            if (Array.isArray(cached) && cached.length > 0) {
+              setMessages(cached.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })) as any);
+            }
+          }
+        } catch {}
         // Load from Arkiv blockchain
         console.log('[Arkiv] Loading messages for session', { activeSessionId, arkivSdkReady, walletAddress });
         const msgs = await arkivChat.getMessagesForSession(activeSessionId);
         console.log('[Arkiv] Raw response', { msgs, entityCount: (msgs.entities || msgs || []).length });
-        const decoded = await Promise.all((msgs.entities || msgs || []).map(async (e: any) => {
+        const decoded = (await Promise.all((msgs.entities || msgs || []).map(async (e: any) => {
           console.log('[Arkiv] Processing entity', { entityKey: e.entityKey, attributes: e.attributes });
           const roleAttr = e.attributes?.find((a: any) => a.key === 'role');
           const r = roleAttr?.value === 'assistant' ? 'assistant' : 'user';
@@ -188,13 +212,21 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
           }
           
           console.log('[Arkiv] Loaded message', { role: r, textPreview: text.substring(0, 50) });
-          
-          return { id: `arkiv_${e.entityKey || Math.random()}`, role: r, text, timestamp: new Date() } as any;
-        }));
+          const k = String(e.entityKey || '');
+          if (k) seenKeysRef.current.add(k);
+          const tsAttr = e.attributes?.find((a: any) => a.key === 'ts');
+          const ts = tsAttr ? Number(tsAttr.value) : Date.now();
+          if (!text || String(text).trim().length === 0) return null;
+          return { id: `arkiv_${k || Math.random()}`, role: r, text, timestamp: new Date(ts) } as any;
+        }))).filter(Boolean as any).sort((a: any, b: any) => a.timestamp.getTime() - b.timestamp.getTime());
         console.log('[Arkiv] Decoded messages', { count: decoded.length, messages: decoded });
         if (decoded.length) {
           setMessages(decoded as any);
           console.log('[Arkiv] Messages set to state');
+          try {
+            const toStore = decoded.map((m: any) => ({ ...m, timestamp: m.timestamp instanceof Date ? m.timestamp.getTime() : m.timestamp }));
+            window.localStorage.setItem(`arkiv_cache_${activeSessionId}`, JSON.stringify(toStore));
+          } catch {}
         } else {
           console.log('[Arkiv] No messages to display');
         }
@@ -214,10 +246,17 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
                 text: m.text,
                 timestamp: new Date(m.timestamp)
               }));
-              // Merge with Arkiv messages (avoid duplicates by checking if already have messages)
-              if (!decoded.length) {
-                setMessages(xxDecoded as any);
+              const merged = [...decoded];
+              for (const xm of xxDecoded) {
+                const dup = merged.some(dm => dm.role === xm.role && dm.text === xm.text && Math.abs(dm.timestamp.getTime() - xm.timestamp.getTime()) < 2000);
+                if (!dup) merged.push(xm as any);
               }
+              merged.sort((a: any, b: any) => a.timestamp.getTime() - b.timestamp.getTime());
+              setMessages(merged as any);
+              try {
+                const toStore = merged.map((m: any) => ({ ...m, timestamp: m.timestamp instanceof Date ? m.timestamp.getTime() : m.timestamp }));
+                window.localStorage.setItem(`arkiv_cache_${activeSessionId}`, JSON.stringify(toStore));
+              } catch {}
             }
             try { console.log('[XX] Channel loaded for session', { channelId, sessionId: activeSessionId }); } catch {}
           } catch (e) {
@@ -239,7 +278,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
       const reload = async () => {
         try {
           const msgs = await arkivChat.getMessagesForSession(activeSessionId);
-          const decoded = await Promise.all((msgs.entities || msgs || []).map(async (e: any) => {
+          const decoded = (await Promise.all((msgs.entities || msgs || []).map(async (e: any) => {
             const roleAttr = e.attributes?.find((a: any) => a.key === 'role');
             const r = roleAttr?.value === 'assistant' ? 'assistant' : 'user';
             const payload = e.payload || e.payloadBase64;
@@ -272,12 +311,20 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
                 }
               }
             }
-            
-            return { id: `arkiv_${e.entityKey || Math.random()}`, role: r, text, timestamp: new Date() } as any;
-          }));
+            const k = String(e.entityKey || '');
+            if (k) seenKeysRef.current.add(k);
+            const tsAttr = e.attributes?.find((a: any) => a.key === 'ts');
+            const ts = tsAttr ? Number(tsAttr.value) : Date.now();
+            if (!text || String(text).trim().length === 0) return null;
+            return { id: `arkiv_${k || Math.random()}`, role: r, text, timestamp: new Date(ts) } as any;
+          }))).filter(Boolean as any).sort((a: any, b: any) => a.timestamp.getTime() - b.timestamp.getTime());
           if (decoded.length) {
             setMessages(decoded as any);
             console.log('[Chat] Reloaded messages from Arkiv', { count: decoded.length });
+            try {
+              const toStore = decoded.map((m: any) => ({ ...m, timestamp: m.timestamp instanceof Date ? m.timestamp.getTime() : m.timestamp }));
+              window.localStorage.setItem(`arkiv_cache_${activeSessionId}`, JSON.stringify(toStore));
+            } catch {}
           }
         } catch (error) {
           console.error('[Chat] Reload failed', error);
@@ -287,6 +334,45 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arkivSdkReady]);
+
+  useEffect(() => {
+    if (!arkivSdkReady || !walletAddress || !activeSessionId) return;
+    const unsub = arkivChat.subscribeMessages(activeSessionId, async (e: any) => {
+      try {
+        const k = String(e.entityKey || e.key || '');
+        if (k && seenKeysRef.current.has(k)) return;
+        const roleAttr = e.attributes?.find((a: any) => a.key === 'role');
+        const r = roleAttr?.value === 'assistant' ? 'assistant' : 'user';
+        const payload = e.payload || e.payloadBase64;
+        let text = '';
+        if (typeof payload === 'string') {
+          try { text = Buffer.from(payload, 'base64').toString('utf-8'); } catch { text = payload; }
+        } else if (payload instanceof Uint8Array) {
+          try { text = new TextDecoder().decode(payload); } catch { text = ''; }
+        }
+        if (xxReady && decryptFromArkiv && text) {
+          const looksLikePlaintext = /^[a-zA-Z0-9\s.,!?;:()'"-]+/.test(text);
+          if (!looksLikePlaintext) {
+            try { const d = await decryptFromArkiv(text); if (d && d !== text) text = d; } catch {}
+          }
+        }
+        if (!text || String(text).trim().length === 0) return;
+        if (k) seenKeysRef.current.add(k);
+        const tsAttr = e.attributes?.find((a: any) => a.key === 'ts');
+        const ts = tsAttr ? Number(tsAttr.value) : Date.now();
+        const msg = { id: `arkiv_${k || Date.now()}`, role: r, text, timestamp: new Date(ts) } as any;
+        setMessages(prev => {
+          const next = [...prev, msg];
+          try {
+            const toStore = next.map((m: any) => ({ ...m, timestamp: m.timestamp instanceof Date ? m.timestamp.getTime() : m.timestamp }));
+            window.localStorage.setItem(`arkiv_cache_${activeSessionId}`, JSON.stringify(toStore));
+          } catch {}
+          return next;
+        });
+      } catch {}
+    });
+    return () => { try { unsub(); } catch {} };
+  }, [arkivSdkReady, walletAddress, activeSessionId, arkivChat]);
 
   // Handle escape key to close chat
   useEffect(() => {
