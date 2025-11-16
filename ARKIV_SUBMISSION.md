@@ -5,13 +5,13 @@
 **PsyChat** is a privacy-first mental health platform that uses **Arkiv** as its core decentralized data layer for storing encrypted therapy session data. The platform demonstrates deep integration with Arkiv's core features: **CRUD operations**, **TTL (Time-To-Live)**, **Queries**, and **Real-time Subscriptions**.
 
 ### Live Demo
-🔗 **[Live Demo Link]** (Add your deployed URL here)
+🔗 **[https://polka-psychat.vercel.app/]** (Add your deployed URL here)
 
 ### Repository
-🔗 **[GitHub Repository]** (Add your repo URL here)
+🔗 **[https://github.com/Motus-DAO/PolkaPsychat]** (Add your repo URL here)
 
 ### Demo Video
-🎥 **[2-3 Minute Demo Video]** (Add your video link here)
+🎥 **[https://youtu.be/qcMM_hOH344]** (Add your video link here)
 
 ---
 

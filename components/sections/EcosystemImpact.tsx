@@ -63,8 +63,8 @@ const EcosystemImpactSection: React.FC = () => {
                       icon: <span className="text-2xl">🏪</span>
                     },
                     {
-                      title: 'xAI Grok',
-                      description: 'AI-powered therapy chat',
+                      title: 'xAI-Human Hybrid Therapy Chat',
+                      description: 'AI-Human powered therapy chat',
                       id: 5,
                       icon: <span className="text-2xl">🤖</span>
                     }
