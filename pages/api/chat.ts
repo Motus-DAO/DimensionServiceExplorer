@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ...(useProvider === 'xai' ? { baseURL: 'https://api.x.ai/v1' } : {}),
     });
 
-    const selectedModel = model || (useProvider === 'openai' ? 'gpt-4o-mini' : 'grok-4');
+    const selectedModel = model || (useProvider === 'openai' ? 'gpt-4o-mini' : 'grok-2-1212');
 
     const completion = await client.chat.completions.create({
       model: selectedModel,

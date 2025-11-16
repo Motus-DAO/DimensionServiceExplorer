@@ -40,8 +40,15 @@ interface ChatProps {
 export default function Chat({ onNavigateToVideo }: ChatProps) {
   const { isConnected: isWalletConnected, selectedAccount } = usePolkadotWallet();
   const walletAddress = selectedAccount?.address || null;
-  const { isConnected: isArkivConnected, connect: arkivConnect, ensureChatBase, mutateEntities, deriveChatBaseKey, walletClient, enc } = useArkiv();
+  const { isConnected: isArkivConnected, sdkReady: arkivSdkReady, connect: arkivConnect, ensureChatBase, mutateEntities, deriveChatBaseKey, walletClient, enc, queryEntities } = useArkiv();
   const arkivChat = useArkivChat(walletAddress);
+  
+  // Expose arkivChat instance for XX Network context to use
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__arkivChatInstance = arkivChat;
+    }
+  }, [arkivChat]);
   const { setup: hyperSetup, requestSessionVerification, monitorVerification, markVerified, isSessionVerified } = useHyperbridge();
   const [isSessionVerifiedState, setIsSessionVerifiedState] = useState(false);
   const { 
@@ -56,7 +63,10 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     sendChannelMessage,
     getChannelMessages,
     getTherapyChannel,
-    channelReady
+    channelReady,
+    // Encryption functions
+    encryptForArkiv,
+    decryptFromArkiv
   } = useXXNetwork() as any;
   
   const [messages, setMessages] = useState<Message[]>([]);
@@ -86,15 +96,8 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
   const [isChatNFTListExpanded, setIsChatNFTListExpanded] = useState(false);
   const [isChatNFTVisible, setIsChatNFTVisible] = useState(true);
   const [txCount, setTxCount] = useState(0);
-  const [activeSessionId, setActiveSessionId] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('psychat_active_session');
-      if (saved) return saved;
-    }
-    const sid = Date.now().toString();
-    if (typeof window !== 'undefined') window.localStorage.setItem('psychat_active_session', sid);
-    return sid;
-  });
+  // Use wallet address as session ID - deterministic and persistent
+  const activeSessionId = walletAddress ? `session_${walletAddress}` : `session_${Date.now()}`;
   
   // XX Network channel state
   const [xxChannelId, setXXChannelId] = useState<string | null>(null);
@@ -135,29 +138,66 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     if (!walletAddress || !activeSessionId) return;
     const loadHistory = async () => {
       try {
-        // Load from Arkiv first (existing implementation)
+        console.log('[Chat] Starting loadHistory', { walletAddress, activeSessionId, arkivSdkReady });
+        // Load from Arkiv blockchain
+        console.log('[Arkiv] Loading messages for session', { activeSessionId, arkivSdkReady, walletAddress });
         const msgs = await arkivChat.getMessagesForSession(activeSessionId);
-        const decoded = (msgs.entities || msgs || []).map((e: any) => {
+        console.log('[Arkiv] Raw response', { msgs, entityCount: (msgs.entities || msgs || []).length });
+        const decoded = await Promise.all((msgs.entities || msgs || []).map(async (e: any) => {
+          console.log('[Arkiv] Processing entity', { entityKey: e.entityKey, attributes: e.attributes });
           const roleAttr = e.attributes?.find((a: any) => a.key === 'role');
           const r = roleAttr?.value === 'assistant' ? 'assistant' : 'user';
           const payload = e.payload || e.payloadBase64;
+          console.log('[Arkiv] Payload type', { type: typeof payload, isUint8Array: payload instanceof Uint8Array, length: payload?.length });
           let text = '';
           if (typeof payload === 'string') {
             try {
               text = Buffer.from(payload, 'base64').toString('utf-8');
+              console.log('[Arkiv] Decoded from base64', { textLength: text.length, preview: text.substring(0, 100) });
             } catch {
               text = payload;
+              console.log('[Arkiv] Using payload as-is', { textLength: text.length });
             }
           } else if (payload instanceof Uint8Array) {
             try {
               text = new TextDecoder().decode(payload);
+              console.log('[Arkiv] Decoded from Uint8Array', { textLength: text.length, preview: text.substring(0, 100) });
             } catch {
               text = '';
+              console.error('[Arkiv] Failed to decode Uint8Array');
             }
           }
+          
+          // Try to decrypt if XX Network is ready and text appears encrypted
+          if (xxReady && decryptFromArkiv && text) {
+            // Only attempt decryption if text doesn't look like readable plaintext
+            // Check if text contains mostly non-printable or looks like base64
+            const looksLikePlaintext = /^[a-zA-Z0-9\s.,!?;:()'"-]+/.test(text);
+            
+            if (!looksLikePlaintext) {
+              try {
+                const decrypted = await decryptFromArkiv(text);
+                if (decrypted && decrypted !== text) {
+                  text = decrypted;
+                  console.log('[XX] Message decrypted');
+                }
+              } catch (err) {
+                console.log('[XX] Keeping original text (decryption failed or not encrypted)');
+              }
+            }
+          }
+          
+          console.log('[Arkiv] Loaded message', { role: r, textPreview: text.substring(0, 50) });
+          
           return { id: `arkiv_${e.entityKey || Math.random()}`, role: r, text, timestamp: new Date() } as any;
-        });
-        if (decoded.length) setMessages(decoded as any);
+        }));
+        console.log('[Arkiv] Decoded messages', { count: decoded.length, messages: decoded });
+        if (decoded.length) {
+          setMessages(decoded as any);
+          console.log('[Arkiv] Messages set to state');
+        } else {
+          console.log('[Arkiv] No messages to display');
+        }
         
         // Create XX Network channel for this session
         if (xxReady && channelReady && createTherapyChannel) {
@@ -184,11 +224,69 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
             try { console.error('[XX] Failed to load channel', e); } catch {}
           }
         }
-      } catch {}
+      } catch (error) {
+        console.error('[Chat] loadHistory failed', error);
+      }
     };
     loadHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress, activeSessionId, xxReady, channelReady]);
+  }, [walletAddress, activeSessionId, xxReady, channelReady, arkivSdkReady]);
+  
+  // Reload when Arkiv SDK becomes ready (to fetch persisted messages)
+  useEffect(() => {
+    if (arkivSdkReady && walletAddress && activeSessionId && messages.length === 0) {
+      console.log('[Chat] Arkiv SDK ready, reloading messages');
+      const reload = async () => {
+        try {
+          const msgs = await arkivChat.getMessagesForSession(activeSessionId);
+          const decoded = await Promise.all((msgs.entities || msgs || []).map(async (e: any) => {
+            const roleAttr = e.attributes?.find((a: any) => a.key === 'role');
+            const r = roleAttr?.value === 'assistant' ? 'assistant' : 'user';
+            const payload = e.payload || e.payloadBase64;
+            let text = '';
+            if (typeof payload === 'string') {
+              try {
+                text = Buffer.from(payload, 'base64').toString('utf-8');
+              } catch {
+                text = payload;
+              }
+            } else if (payload instanceof Uint8Array) {
+              try {
+                text = new TextDecoder().decode(payload);
+              } catch {
+                text = '';
+              }
+            }
+            
+            // Try to decrypt if XX Network is ready
+            if (xxReady && decryptFromArkiv && text) {
+              const looksLikePlaintext = /^[a-zA-Z0-9\s.,!?;:()'"-]+/.test(text);
+              if (!looksLikePlaintext) {
+                try {
+                  const decrypted = await decryptFromArkiv(text);
+                  if (decrypted && decrypted !== text) {
+                    text = decrypted;
+                  }
+                } catch (err) {
+                  console.log('[XX] Keeping original text');
+                }
+              }
+            }
+            
+            return { id: `arkiv_${e.entityKey || Math.random()}`, role: r, text, timestamp: new Date() } as any;
+          }));
+          if (decoded.length) {
+            setMessages(decoded as any);
+            console.log('[Chat] Reloaded messages from Arkiv', { count: decoded.length });
+          }
+        } catch (error) {
+          console.error('[Chat] Reload failed', error);
+        }
+      };
+      reload();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arkivSdkReady]);
 
   // Handle escape key to close chat
   useEffect(() => {
@@ -239,26 +337,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
 
-  useEffect(() => {
-    const pickLatestSession = async () => {
-      try {
-        if (!walletAddress) return;
-        const sessions = await arkivChat.getSessions();
-        const all = sessions.entities || [];
-        if (!all.length) return;
-        const latest = all[all.length - 1];
-        const sidAttr = latest?.attributes?.find((a: any) => a.key === 'sessionId');
-        const sid = sidAttr?.value || latest?.sessionId;
-        if (sid && sid !== activeSessionId) {
-          setActiveSessionId(String(sid));
-          try { console.log('[Arkiv] Active session set', { sessionId: sid }); } catch {}
-          if (typeof window !== 'undefined') window.localStorage.setItem('psychat_active_session', String(sid));
-        }
-      } catch {}
-    };
-    pickLatestSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  // Session is now deterministic based on wallet address - no need to query
 
   const appendTxLog = (entry: { txHash?: string; entityKey?: string; type: string; sessionId?: string; role?: string; timestamp: number }, address?: string | null) => {
     try {
@@ -402,22 +481,46 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     setMessages(prev => [...prev, userMsg]);
     
     // Store in Arkiv (existing blockchain storage)
+    let receipt: any;
     try {
       await arkivChat.ensureBase();
       console.log('[Arkiv] Storing message', { role: 'user', sessionId: activeSessionId });
-      const receipt = await arkivChat.storeMessage(activeSessionId, 'user', userText);
+      
+      // Encrypt message before storing in Arkiv
+      let textToStore = userText;
+      if (xxReady && encryptForArkiv) {
+        try {
+          textToStore = await encryptForArkiv(userText);
+          console.log('[XX] Message encrypted for Arkiv');
+        } catch (err) {
+          console.error('[XX] Encryption failed, storing plaintext', err);
+        }
+      }
+      
+      receipt = await arkivChat.storeMessage(activeSessionId, 'user', textToStore);
       appendTxLog({ txHash: receipt.txHash, entityKey: receipt.entityKey, type: 'chatMessage', sessionId: activeSessionId, role: 'user', timestamp: Date.now() }, walletAddress);
       console.log('[Arkiv] Message stored', { role: 'user', entityKey: receipt.entityKey, txHash: receipt.txHash, sessionId: activeSessionId });
-    } catch {}
+    } catch (err) {
+      console.error('[Arkiv] Failed to store user message', err);
+    }
     
     // Store in XX Network channel (decentralized E2E encrypted storage)
+    let arkivTxHash: string | undefined;
+    let arkivEntityKey: string | undefined;
+    
+    // Capture Arkiv metadata from above
+    if (receipt) {
+      arkivTxHash = receipt.txHash;
+      arkivEntityKey = receipt.entityKey;
+    }
+    
     if (xxReady && channelReady && xxChannelId && sendChannelMessage) {
       try {
         // Small delay to ensure UI updates before async operation
         await new Promise(resolve => setTimeout(resolve, 50));
         setXXSyncStatus('syncing');
-        console.log('[XX] Sending channel message', { role: 'user', channelId: xxChannelId });
-        const success = await sendChannelMessage(xxChannelId, 'user', userText);
+        console.log('[XX] Sending channel message', { role: 'user', channelId: xxChannelId, arkivTxHash });
+        const success = await sendChannelMessage(xxChannelId, 'user', userText, arkivTxHash, arkivEntityKey);
         if (success) {
           // Keep synced status visible for a moment
           setXXSyncStatus('synced');
@@ -445,7 +548,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: userText }], provider: 'xai', model: 'grok-4-latest' }),
+        body: JSON.stringify({ messages: [{ role: 'user', content: userText }], provider: 'xai', model: 'grok-2-1212' }),
       });
       const data = await res.json();
       const aiText: string = data?.response || 'Sorry, there was an issue generating a response.';
@@ -461,21 +564,43 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
       setMessages(prev => [...prev, aiMsg]);
       
       // Store in Arkiv
+      let receipt2: any;
       try {
         console.log('[Arkiv] Storing message', { role: 'assistant', sessionId: activeSessionId });
-        const receipt2 = await arkivChat.storeMessage(activeSessionId, 'assistant', aiText);
+        
+        // Encrypt message before storing in Arkiv
+        let aiTextToStore = aiText;
+        if (xxReady && encryptForArkiv) {
+          try {
+            aiTextToStore = await encryptForArkiv(aiText);
+            console.log('[XX] Message encrypted for Arkiv');
+          } catch (err) {
+            console.error('[XX] Encryption failed, storing plaintext', err);
+          }
+        }
+        
+        receipt2 = await arkivChat.storeMessage(activeSessionId, 'assistant', aiTextToStore);
         appendTxLog({ txHash: receipt2.txHash, entityKey: receipt2.entityKey, type: 'chatMessage', sessionId: activeSessionId, role: 'assistant', timestamp: Date.now() }, walletAddress);
         console.log('[Arkiv] Message stored', { role: 'assistant', entityKey: receipt2.entityKey, txHash: receipt2.txHash, sessionId: activeSessionId });
-      } catch {}
+      } catch (err) {
+        console.error('[Arkiv] Failed to store assistant message', err);
+      }
       
       // Store in XX Network channel
+      let aiArkivTxHash: string | undefined;
+      let aiArkivEntityKey: string | undefined;
+      if (receipt2) {
+        aiArkivTxHash = receipt2.txHash;
+        aiArkivEntityKey = receipt2.entityKey;
+      }
+      
       if (xxReady && channelReady && xxChannelId && sendChannelMessage) {
         try {
           // Small delay for visual feedback
           await new Promise(resolve => setTimeout(resolve, 50));
           setXXSyncStatus('syncing');
-          console.log('[XX] Sending channel message', { role: 'assistant', channelId: xxChannelId });
-          const success = await sendChannelMessage(xxChannelId, 'assistant', aiText);
+          console.log('[XX] Sending channel message', { role: 'assistant', channelId: xxChannelId, arkivTxHash: aiArkivTxHash });
+          const success = await sendChannelMessage(xxChannelId, 'assistant', aiText, aiArkivTxHash, aiArkivEntityKey);
           if (success) {
             setXXSyncStatus('synced');
             console.log('[XX] Channel message sent');
@@ -699,11 +824,7 @@ export default function Chat({ onNavigateToVideo }: ChatProps) {
     }
     finally {
       inProgressRef.current = false;
-      try {
-        const nextSid = Date.now().toString();
-        setActiveSessionId(nextSid);
-        if (typeof window !== 'undefined') window.localStorage.setItem('psychat_active_session', nextSid);
-      } catch {}
+      // Session is deterministic based on wallet - no need to change it
     }
   };
 

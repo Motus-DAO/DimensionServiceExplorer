@@ -2,6 +2,37 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { usePolkadotWallet } from './PolkadotWalletContext';
 
+// Standalone functions to interact with Arkiv without hooks
+async function loadXXIdentityFromArkiv(walletAddress: string): Promise<string | null> {
+  try {
+    const arkivChat = (window as any).__arkivChatInstance;
+    if (!arkivChat || !arkivChat.getXXIdentity) {
+      console.log('[XX] Arkiv chat not available, cannot load identity');
+      return null;
+    }
+    const identity = await arkivChat.getXXIdentity();
+    console.log('[XX] Loaded identity from Arkiv', { found: !!identity });
+    return identity;
+  } catch (e) {
+    console.error('[XX] Failed to load identity from Arkiv', e);
+    return null;
+  }
+}
+
+async function storeXXIdentityToArkiv(walletAddress: string, identity: string): Promise<void> {
+  try {
+    const arkivChat = (window as any).__arkivChatInstance;
+    if (!arkivChat || !arkivChat.storeXXIdentity) {
+      console.log('[XX] Arkiv chat not available, cannot store identity');
+      return;
+    }
+    await arkivChat.storeXXIdentity(identity);
+    console.log('[XX] Stored identity to Arkiv');
+  } catch (e) {
+    console.error('[XX] Failed to store identity to Arkiv', e);
+  }
+}
+
 interface XXMessage {
   id: string;
   text: string;
@@ -30,6 +61,9 @@ type XXContextType = {
   getChannelMessages: (channelId: string) => Promise<XXMessage[]>;
   getTherapyChannel: (sessionId: string) => string | null;
   channelReady: boolean;
+  // Encryption for Arkiv storage
+  encryptForArkiv: (text: string) => Promise<string>;
+  decryptFromArkiv: (encrypted: string) => Promise<string>;
 };
 
 const XXContext = createContext<XXContextType | null>(null);
@@ -48,6 +82,7 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
   const channelsRef = useRef<Map<string, XXChannel>>(new Map());
   const messagesRef = useRef<Map<string, XXMessage[]>>(new Map());
 
+  // XX Network initialization
   useEffect(() => {
     let cancelled = false;
     const init = async () => {
@@ -166,22 +201,25 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
           try { console.error('[XX] NDF fetch failed', e); } catch {}
           throw e;
         }
-        const statePath = 'xx';
+        // Namespace state path per wallet to avoid signature collisions
+        const safeAddr = (walletAddress || 'default').replace(/[^a-zA-Z0-9_-]/g, '').slice(-12);
+        const statePath = `xx_${safeAddr}`;
         const secret = Buffer.from('Hello');
-        const registrationCode = ''; // Empty registration code
-        try { console.log('[XX] NewCmix start', { statePath, ndfLength: ndfJson.length, ndfType: 'string' }); } catch {}
+        const registrationCode = '';
+        console.log('[XX] State path', { statePath, wallet: walletAddress });
         
-        // Check if we need to initialize
-        const exists = typeof window !== 'undefined' && window.localStorage.getItem('cMixInitialized') === 'true';
+        // Check if we need to initialize (per wallet)
+        const cMixInitKey = `cMixInit_${statePath}`;
+        const exists = typeof window !== 'undefined' && window.localStorage.getItem(cMixInitKey) === 'true';
         if (!exists) {
           try {
             // NewCmix(ndf: string, storageDir: string, password: Uint8Array, registrationCode: string)
             await XX.NewCmix(ndfJson, statePath, secret, registrationCode);
-            if (typeof window !== 'undefined') window.localStorage.setItem('cMixInitialized', 'true');
-            try { console.log('[XX] NewCmix completed'); } catch {}
+            if (typeof window !== 'undefined') window.localStorage.setItem(cMixInitKey, 'true');
+            console.log('[XX] NewCmix completed for', statePath);
           } catch (initError) {
             // Clear the flag so we can retry
-            if (typeof window !== 'undefined') window.localStorage.removeItem('cMixInitialized');
+            if (typeof window !== 'undefined') window.localStorage.removeItem(cMixInitKey);
             throw initError;
           }
         } else {
@@ -191,14 +229,44 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
         const cmixParams = Buffer.from(''); // Empty cmix parameters
         const net = await XX.LoadCmix(statePath, secret, cmixParams);
         try { console.log('[XX] LoadCmix ok', { netId: net?.GetID?.() }); } catch {}
-        const idStr = typeof window !== 'undefined' ? window.localStorage.getItem('MyDMID') : null;
-        let dmIDStr = idStr;
-        if (!dmIDStr) {
-          try { console.log('[XX] GenerateChannelIdentity start'); } catch {}
-          dmIDStr = Buffer.from(XX.GenerateChannelIdentity(net.GetID())).toString('base64');
-          if (typeof window !== 'undefined') window.localStorage.setItem('MyDMID', dmIDStr);
-          try { console.log('[XX] DM identity generated'); } catch {}
+        
+        // Derive XX identity from wallet signature OR generate temporary
+        let dmIDStr: string | null = null;
+        
+        // Try wallet-derived identity if wallet connected
+        if (walletAddress && typeof window !== 'undefined') {
+          try {
+            console.log('[XX] Requesting wallet signature for identity');
+            const { web3FromAddress } = await import('@polkadot/extension-dapp');
+            const injector = await web3FromAddress(walletAddress);
+            const message = `PsyChat XX Network Identity for ${walletAddress}`;
+            const signRaw = injector?.signer?.signRaw;
+            
+            if (signRaw) {
+              const { signature } = await signRaw({
+                address: walletAddress,
+                data: Buffer.from(message).toString('hex'),
+                type: 'bytes'
+              });
+              
+              // Use signature to derive deterministic 32-byte XX identity
+              const { sha3_256 } = await import('js-sha3');
+              const hash = sha3_256(signature);
+              const identityBytes = Buffer.from(hash, 'hex').slice(0, 32);
+              dmIDStr = identityBytes.toString('base64');
+              console.log('[XX] Identity derived from wallet signature');
+            }
+          } catch (e) {
+            console.error('[XX] Failed to get wallet signature', e);
+          }
         }
+        
+        // Fallback: generate random identity (won't persist)
+        if (!dmIDStr) {
+          console.log('[XX] Generating temporary identity (no wallet)');
+          dmIDStr = Buffer.from(XX.GenerateChannelIdentity(net.GetID())).toString('base64');
+        }
+        
         const dmID = new Uint8Array(Buffer.from(dmIDStr as string, 'base64'));
         try { console.log('[XX] LoadNotificationsDummy start'); } catch {}
         const notifications = XX.LoadNotificationsDummy(net.GetID());
@@ -209,7 +277,7 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
         const onDmEvent = (_type: number, data: Uint8Array) => {
           const msg = Buffer.from(data).toString('utf-8');
           setReceived((prev) => [...prev, msg]);
-          try { console.log('[XX] EventUpdate', { msg }); } catch {}
+          console.log('[XX] Message received');
         };
         try { console.log('[XX] dmIndexedDbWorkerPath start'); } catch {}
         const workerPath = await xxdk.dmIndexedDbWorkerPath();
@@ -251,7 +319,7 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Load channels from localStorage
+  // Load channels from localStorage (temporary - will move to Arkiv)
   useEffect(() => {
     if (typeof window === 'undefined' || !walletAddress) return;
     try {
@@ -409,13 +477,62 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
     return null;
   };
 
+  // Encrypt text for Arkiv storage using XX identity
+  const encryptForArkiv = async (text: string): Promise<string> => {
+    try {
+      if (!selfPubkeyBase64) {
+        throw new Error('XX identity not ready');
+      }
+      // Use XX pubkey as encryption key (simple XOR for demo, use AES in production)
+      const { sha3_256 } = await import('js-sha3');
+      const key = sha3_256(selfPubkeyBase64);
+      const textBytes = Buffer.from(text, 'utf-8');
+      const keyBytes = Buffer.from(key, 'hex');
+      
+      // XOR encryption
+      const encrypted = Buffer.alloc(textBytes.length);
+      for (let i = 0; i < textBytes.length; i++) {
+        encrypted[i] = textBytes[i] ^ keyBytes[i % keyBytes.length];
+      }
+      
+      return encrypted.toString('base64');
+    } catch (error) {
+      console.error('[XX] Encryption failed', error);
+      return text; // Fallback to plaintext
+    }
+  };
+
+  // Decrypt text from Arkiv storage using XX identity
+  const decryptFromArkiv = async (encrypted: string): Promise<string> => {
+    try {
+      if (!selfPubkeyBase64) {
+        throw new Error('XX identity not ready');
+      }
+      // Use same key to decrypt
+      const { sha3_256 } = await import('js-sha3');
+      const key = sha3_256(selfPubkeyBase64);
+      const encryptedBytes = Buffer.from(encrypted, 'base64');
+      const keyBytes = Buffer.from(key, 'hex');
+      
+      // XOR decryption (same as encryption)
+      const decrypted = Buffer.alloc(encryptedBytes.length);
+      for (let i = 0; i < encryptedBytes.length; i++) {
+        decrypted[i] = encryptedBytes[i] ^ keyBytes[i % keyBytes.length];
+      }
+      
+      return decrypted.toString('utf-8');
+    } catch (error) {
+      console.error('[XX] Decryption failed', error);
+      return encrypted; // Fallback to encrypted text
+    }
+  };
+
   const sendDirectMessage = async (text: string) => {
     try {
       const dm = dmClientRef.current;
       if (!dm) return false;
       const token = dm.GetToken();
       const pubkey = dm.GetPublicKey();
-      try { console.log('[XX] Send self', { textLength: text.length }); } catch {}
       await dm.SendText(pubkey, token, text, 0, Buffer.from(''));
       return true;
     } catch {
@@ -436,6 +553,9 @@ export function XXNetworkProvider({ children }: { children: React.ReactNode }) {
     getChannelMessages,
     getTherapyChannel,
     channelReady,
+    // Encryption functions
+    encryptForArkiv,
+    decryptFromArkiv,
   }), [ready, received, selfPubkeyBase64, selfToken, walletAddress, channelReady]);
   return <XXContext.Provider value={value}>{children}</XXContext.Provider>;
 }

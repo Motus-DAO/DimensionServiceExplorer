@@ -19,6 +19,7 @@ type ArkivReceipt = { entityKey: string; txHash?: string };
 type ArkivContextType = {
   accountAddress: string | null;
   isConnected: boolean;
+  sdkReady: boolean;
   connect: (config?: { accountAddress?: string; privateKey?: string }) => Promise<void>;
   createEntity: (input: CreateEntityInput) => Promise<ArkivReceipt>;
   mutateEntities: (params: { creates: CreateEntityInput[] }) => Promise<{ receipts: ArkivReceipt[] }>;
@@ -62,6 +63,7 @@ function writeLocal<T>(key: string, value: T): void {
 export function ArkivProvider({ children }: { children: React.ReactNode }) {
   const [accountAddress, setAccountAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [sdkReady, setSdkReady] = useState(false);
   const [sdkWalletClient, setSdkWalletClient] = useState<WalletArkivClient | null>(null);
   const [sdkPublicClient, setSdkPublicClient] = useState<PublicArkivClient | null>(null);
   const [sdkEq, setSdkEq] = useState<(key: string, value: string | number) => any>(((key: string, value: string | number) => ({ key, value })));
@@ -90,7 +92,11 @@ export function ArkivProvider({ children }: { children: React.ReactNode }) {
       setSdkWalletClient(walletClient);
       setSdkEq(() => sdkEqFn);
       setSdkEnc({ encode: (text: string) => new TextEncoder().encode(text) });
-    } catch {
+      setSdkReady(true);
+      console.log('[Arkiv] SDK ready');
+    } catch (e) {
+      console.error('[Arkiv] SDK init failed', e);
+      setSdkReady(false);
     }
   };
 
@@ -102,69 +108,42 @@ export function ArkivProvider({ children }: { children: React.ReactNode }) {
   const eq = (key: string, value: string): ArkivAttribute => ({ key, value });
 
   const createEntity = async (input: CreateEntityInput): Promise<ArkivReceipt> => {
-    if (sdkWalletClient) {
-      const res = await (sdkWalletClient as any).createEntity(input);
-      try {
-        console.log('[Arkiv] createEntity', { contentType: input.contentType, attributes: input.attributes, expiresIn: input.expiresIn, entityKey: res?.entityKey, txHash: res?.txHash });
-      } catch {}
-      return { entityKey: res?.entityKey as string, txHash: res?.txHash as string };
+    if (!sdkWalletClient) {
+      throw new Error('Arkiv SDK not connected - cannot create entity');
     }
-    const now = Date.now();
-    const entityKey = toEntityKeyFromParts([
-      Array.from(input.payload || new Uint8Array()),
-      input.contentType,
-      input.attributes,
-      input.expiresIn || 0,
-      now,
-    ]);
-    const existing = readLocal<any[]>('arkiv_entities', []);
-    const next = [
-      ...existing,
-      {
-        entityKey,
-        payloadBase64: typeof window !== 'undefined' ? btoa(String.fromCharCode(...Array.from(input.payload))) : '',
-        contentType: input.contentType,
-        attributes: input.attributes,
-        expiresIn: input.expiresIn || 0,
-        timestamp: now,
-      },
-    ];
-    writeLocal('arkiv_entities', next);
-    return { entityKey };
+    const res = await (sdkWalletClient as any).createEntity(input);
+    try {
+      console.log('[Arkiv] createEntity', { contentType: input.contentType, attributes: input.attributes, expiresIn: input.expiresIn, entityKey: res?.entityKey, txHash: res?.txHash });
+    } catch {}
+    return { entityKey: res?.entityKey as string, txHash: res?.txHash as string };
   };
 
   const mutateEntities = async (params: { creates: CreateEntityInput[] }) => {
-    if (sdkWalletClient) {
-      const res = await (sdkWalletClient as any).mutateEntities(params);
-      try {
-        console.log('[Arkiv] mutateEntities', { creates: params.creates?.length, receipts: res });
-      } catch {}
-      return res as { receipts: ArkivReceipt[] };
+    if (!sdkWalletClient) {
+      throw new Error('Arkiv SDK not connected - cannot mutate entities');
     }
-    const receipts: ArkivReceipt[] = [];
-    for (const c of params.creates) {
-      const r = await createEntity(c);
-      receipts.push(r);
-    }
-    return { receipts };
+    const res = await (sdkWalletClient as any).mutateEntities(params);
+    try {
+      console.log('[Arkiv] mutateEntities', { creates: params.creates?.length, receipts: res });
+    } catch {}
+    return res as { receipts: ArkivReceipt[] };
   };
 
   const queryEntities = async (where: ArkivAttribute[]) => {
-    if (sdkPublicClient) {
+    if (!sdkPublicClient) {
+      console.warn('[Arkiv] SDK not ready, returning empty results');
+      return { entities: [] };
+    }
+    try {
       const qb = (sdkPublicClient as any).buildQuery();
       const predicates = where.map((c) => sdkEq(c.key, c.value));
       const result = await qb.where(predicates).fetch();
-      try {
-        console.log('[Arkiv] queryEntities', { where, count: (result as any)?.entities?.length ?? (result as any)?.length });
-      } catch {}
+      console.log('[Arkiv] queryEntities', { where, count: (result as any)?.entities?.length ?? (result as any)?.length });
       return result as { entities: any[] };
+    } catch (e) {
+      console.error('[Arkiv] Query failed', e);
+      return { entities: [] };
     }
-    const all = readLocal<any[]>('arkiv_entities', []);
-    const matches = all.filter((e) => {
-      const attrs: ArkivAttribute[] = e.attributes || [];
-      return where.every((cond) => attrs.some((a) => a.key === cond.key && a.value === cond.value));
-    });
-    return { entities: matches };
   };
 
   const ensureChatBase = async (polkadotAddress: string): Promise<string> => {
@@ -194,6 +173,7 @@ export function ArkivProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<ArkivContextType>(() => ({
     accountAddress,
     isConnected,
+    sdkReady,
     connect,
     createEntity,
     mutateEntities,
@@ -212,7 +192,7 @@ export function ArkivProvider({ children }: { children: React.ReactNode }) {
     },
     enc: sdkEnc,
     eq: sdkEq,
-  }), [accountAddress, isConnected, sdkWalletClient, sdkPublicClient, sdkEnc, sdkEq]);
+  }), [accountAddress, isConnected, sdkReady, sdkWalletClient, sdkPublicClient, sdkEnc, sdkEq]);
 
   return <ArkivContext.Provider value={value}>{children}</ArkivContext.Provider>;
 }
