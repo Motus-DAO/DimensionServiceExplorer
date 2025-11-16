@@ -22,8 +22,10 @@ import {
   HiVideoCamera, 
   HiShoppingBag, 
   HiChartBar,
-  HiUser
+  HiUser,
+  HiPhotograph
 } from 'react-icons/hi';
+import { useRouter } from 'next/router';
 
 // Section Components
 import {
@@ -39,6 +41,7 @@ import {
 
 export default function Home() {
   const { isConnected: connected, connect } = usePolkadotWallet();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'home' | 'chat' | 'videochat' | 'marketplace' | 'dashboard' | 'profile'>('home');
   const [mounted, setMounted] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -253,6 +256,7 @@ export default function Home() {
               { icon: <HiVideoCamera className="text-emerald-400" size={24} />, label: 'Video', onClick: () => setActiveTab('videochat') },
               { icon: <HiShoppingBag className="text-purple-400" size={24} />, label: 'Marketplace', onClick: () => setActiveTab('marketplace') },
               { icon: <HiChartBar className="text-blue-400" size={24} />, label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
+              { icon: <HiPhotograph className="text-yellow-400" size={24} />, label: 'Gallery', onClick: () => router.push('/fractales') },
               { icon: <HiUser className="text-orange-400" size={24} />, label: 'Profile', onClick: () => setActiveTab('profile') },
             ]}
             panelHeight={68}
@@ -416,6 +420,21 @@ export default function Home() {
                     }}
                   />
                   
+                  {/* Art Gallery Button */}
+                  <div className="flex justify-center my-8">
+                    <HoloButton
+                      onClick={() => router.push('/fractales')}
+                      variant="primary"
+                      size="lg"
+                      className="px-8 py-3"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <HiPhotograph className="text-yellow-400" size={20} />
+                        <span>View Art Gallery</span>
+                      </div>
+                    </HoloButton>
+                  </div>
+                  
                   {/* Section Divider */}
                   <div className="my-16">
                     <HoloDivider variant="horizontal" thickness="medium" />
@@ -502,7 +521,7 @@ export default function Home() {
                 <span className="text-green-400"> XX Network</span> • 
                 <span className="text-blue-400"> Arkiv</span> • 
                 <span className="text-purple-400"> Kusama</span> • 
-                <span className="text-green-400"> Polkadot</span>
+                <span className="text-green-400"> </span>
               </p>
             </div>
 
