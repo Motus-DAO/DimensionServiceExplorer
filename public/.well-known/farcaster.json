@@ -23,8 +23,12 @@
   "splash": {
     "src": "/favicon.ico",
     "sizes": "512x512",
-    "type": "image/x-icon"
+    "type": "image/x-icon",
+    "backgroundColor": "#0B101A"
   },
-  "tagline": "Explore dimensions, mint experiences, earn in the creators economy"
+  "tagline": "Explore dimensions, mint experiences, earn in the creators economy",
+  "allowedDomains": [
+    "dimension-service-explorer.vercel.app",
+    "*.vercel.app"
+  ]
 }
-

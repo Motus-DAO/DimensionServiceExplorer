@@ -78,7 +78,10 @@ NEXT_PUBLIC_CHAIN_ID=42220
 NEXT_PUBLIC_PSY_TOKEN_ADDRESS=0x... # PSY ERC20 token address on Celo
 
 # Farcaster Mini App
-NEXT_PUBLIC_FARCASTER_APP_URL=https://your-domain.com
+NEXT_PUBLIC_FARCASTER_APP_URL=https://dimension-service-explorer.vercel.app
+
+# NFT Contract (optional - for minting)
+NEXT_PUBLIC_FRACTALES_NFT_ADDRESS=0x... # Fractales NFT contract address on Celo
 ```
 
 4. **Start the development server**
@@ -97,10 +100,21 @@ http://localhost:3000
 ## 📖 How to Use
 
 ### Step 1: Access via Farcaster
-1. Open Farcaster (Warpcast or compatible client)
-2. Navigate to the Dimension Service Explorer miniapp
-3. Sign in with your Farcaster account
-4. Your wallet is automatically connected via Farcaster SDK
+
+**Quick Access:**
+1. Open **Warpcast** (mobile app or web at warpcast.com)
+2. In any cast/compose box, paste: `https://dimension-service-explorer.vercel.app`
+3. Warpcast will detect it as a miniapp and show a preview card
+4. Tap the preview to open the miniapp in fullscreen
+5. Your Farcaster account is automatically connected via SDK
+6. Your wallet is accessible through Farcaster's built-in wallet
+
+**Alternative Methods:**
+- Share the URL in a cast for others to discover
+- Add to your Warpcast profile bio
+- Create a QR code for easy mobile access
+
+📖 **See [HOW_TO_OPEN_ON_FARCASTER.md](./HOW_TO_OPEN_ON_FARCASTER.md) for detailed instructions**
 
 ### Step 2: Explore Dimensions
 1. Browse the **Fractales Gallery** to see all available generators
@@ -254,7 +268,7 @@ DimensionServiceExplorer-celo/
 - **Chain ID:** 42220
 - **RPC URL:** https://forno.celo.org
 - **Block Explorer:** https://celoscan.io
-- **Currency:** CELO (native), cUSD (stablecoin)
+- **Currency:** PSY, CELO (native), cUSD (stablecoin)
 
 ### Adding Celo to Your Wallet
 1. Open your wallet (MetaMask, etc.)
@@ -270,9 +284,11 @@ DimensionServiceExplorer-celo/
 ## 📊 Features Roadmap
 
 ### ✅ Current Features
-- [x] Farcaster miniapp integration
+- [x] Farcaster miniapp integration (fully integrated with SDK)
+- [x] Farcaster user authentication and profile display
+- [x] Farcaster wallet integration for NFT minting
 - [x] 13+ fractal generators
-- [x] NFT minting on Celo
+- [x] NFT minting on Celo via Farcaster wallet
 - [x] Minted gallery
 - [x] PSY token faucet
 - [x] Creators economy marketplace

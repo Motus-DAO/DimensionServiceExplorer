@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import React, { useEffect, useRef, useState } from 'react'
 import { useFractalCapture } from '../../contexts/FractalCaptureContext'
+import { useFarcaster } from '../../contexts/FarcasterContext'
 import { HoloPanel, HoloButton, HoloText } from '../../components/ui/holo'
 import { ethers } from 'ethers'
 import path from 'path'
@@ -153,52 +154,90 @@ window.addEventListener('message', function(e) {
 
 export default function FractalesPage({ name, html }: Props) {
   const { registerFrame, capture } = useFractalCapture()
+  const { getWalletAddress, walletAddress, isConnected } = useFarcaster()
   const ref = useRef<HTMLIFrameElement>(null)
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
   const [account, setAccount] = useState<string>('')
   const [status, setStatus] = useState<string>('')
   const [capturedUrl, setCapturedUrl] = useState<string | null>(null)
+  
   useEffect(() => {
     registerFrame(name, ref.current)
     return () => registerFrame(name, null)
   }, [name, registerFrame])
+
+  // Get wallet address from Farcaster
+  useEffect(() => {
+    const fetchWallet = async () => {
+      if (isConnected && !account) {
+        const addr = walletAddress || await getWalletAddress()
+        if (addr) {
+          setAccount(addr)
+        }
+      }
+    }
+    fetchWallet()
+  }, [isConnected, walletAddress, account, getWalletAddress])
+
+  // Celo Mainnet chain params
   const chainParams = {
-    chainId: '0x190f1b46',
-    chainName: 'Polkadot Hub TestNet',
-    nativeCurrency: { name: 'Paseo', symbol: 'PAS', decimals: 18 },
-    rpcUrls: ['https://testnet-passet-hub-eth-rpc.polkadot.io'],
-    blockExplorerUrls: ['https://blockscout-passet-hub.parity-testnet.parity.io/']
+    chainId: '0xA4EC', // 42220 in hex
+    chainName: 'Celo Mainnet',
+    nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
+    rpcUrls: [process.env.NEXT_PUBLIC_CELO_RPC_URL || 'https://forno.celo.org'],
+    blockExplorerUrls: ['https://celoscan.io']
   }
-  const getMetaMaskProvider = () => {
-    const w: any = window as any
-    const eth = w.ethereum
-    if (!eth) return null
-    if (eth.providers && Array.isArray(eth.providers)) {
-      const mm = eth.providers.find((p: any) => p && p.isMetaMask)
-      if (mm) return mm
-    }
-    return eth.isMetaMask ? eth : null
-  }
-  const ensureChain = async () => {
-    const eth = getMetaMaskProvider()
-    if (!eth) throw new Error('MetaMask not found')
+
+  const getFarcasterProvider = async () => {
     try {
-      await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainParams.chainId }] })
-    } catch {
-      await eth.request({ method: 'wallet_addEthereumChain', params: [chainParams] })
-      await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainParams.chainId }] })
+      if (typeof window === 'undefined') return null
+      const module = await import('@farcaster/miniapp-sdk')
+      const sdk = module.sdk
+      const isInMiniApp = await sdk.isInMiniApp()
+      if (isInMiniApp) {
+        return await sdk.wallet.getEthereumProvider()
+      }
+    } catch (e) {
+      console.log('[Fractal] Farcaster SDK not available:', e)
+    }
+    // Fallback to window.ethereum if Farcaster not available
+    const w: any = window as any
+    return w.ethereum || null
+  }
+
+  const ensureChain = async () => {
+    const provider = await getFarcasterProvider()
+    if (!provider) throw new Error('Wallet provider not found')
+    try {
+      await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainParams.chainId }] })
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask
+      if (switchError.code === 4902) {
+        try {
+          await provider.request({ method: 'wallet_addEthereumChain', params: [chainParams] })
+          await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainParams.chainId }] })
+        } catch (addError) {
+          throw new Error('Failed to add Celo network')
+        }
+      } else {
+        throw switchError
+      }
     }
   }
+
   const onConnect = async () => {
     try {
       setStatus('')
       await ensureChain()
-      const eth = getMetaMaskProvider()
-      const accs: string[] = await eth.request({ method: 'eth_requestAccounts' })
-      setAccount(accs[0] || '')
+      const addr = await getWalletAddress()
+      if (addr) {
+        setAccount(addr)
+      } else {
+        setStatus('Failed to get wallet address')
+      }
     } catch (e: any) {
-      setStatus('Connect failed')
+      setStatus('Connect failed: ' + (e.message || 'Unknown error'))
     }
   }
   const onCaptureScreen = async () => {
@@ -343,21 +382,29 @@ export default function FractalesPage({ name, html }: Props) {
   const onMint = async () => {
     const addr = process.env.NEXT_PUBLIC_FRACTALES_NFT_ADDRESS || ''
     if (!addr) { setStatus('Contract address missing'); return }
+    if (!isConnected) { setStatus('Please connect to Farcaster first'); return }
     setBusy(true)
     setStatus('')
     try {
       await ensureChain()
-      const eth = getMetaMaskProvider()
-      if (!eth) throw new Error('MetaMask not found')
+      const provider = await getFarcasterProvider()
+      if (!provider) throw new Error('Wallet provider not found')
+      
       if (!account) {
-        const accs: string[] = await eth.request({ method: 'eth_requestAccounts' })
-        setAccount(accs[0] || '')
+        const addr = await getWalletAddress()
+        if (addr) {
+          setAccount(addr)
+        } else {
+          throw new Error('Failed to get wallet address')
+        }
       }
+      
       let dataUrl = capturedUrl || await capture(name, { hq: true, crop: 512 })
       dataUrl = await cropToFitBytes(dataUrl, 6000)
       let base64 = dataUrl.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, '')
-      const provider = new ethers.BrowserProvider(eth)
-      const signer = await provider.getSigner()
+      
+      const ethersProvider = new ethers.BrowserProvider(provider)
+      const signer = await ethersProvider.getSigner()
       const abi = ['function publicMint(string name, string imageBase64) external returns (uint256)']
       const c = new ethers.Contract(addr, abi, signer)
       let gasLimit: bigint
@@ -372,7 +419,7 @@ export default function FractalesPage({ name, html }: Props) {
       const rec = await tx.wait()
       setStatus(String(rec?.hash || 'Minted'))
     } catch (e: any) {
-      setStatus('Mint failed')
+      setStatus('Mint failed: ' + (e.message || 'Unknown error'))
     }
     setBusy(false)
   }
@@ -398,7 +445,7 @@ export default function FractalesPage({ name, html }: Props) {
           {status && (
             <div className="mt-3 text-white/80 text-xs break-all">
               {status.startsWith('0x') ? (
-                <a href={`https://blockscout-passet-hub.parity-testnet.parity.io/tx/${status}`} target="_blank" rel="noreferrer" className="text-cyan-400 underline">View Tx</a>
+                <a href={`https://celoscan.io/tx/${status}`} target="_blank" rel="noreferrer" className="text-cyan-400 underline">View Tx on CeloScan</a>
               ) : (
                 status
               )}

@@ -10,6 +10,7 @@ import { HoloPanel, HoloButton, HoloText, HoloDivider } from '../components/ui/h
 import { ComplexMolecule, WaterMolecule } from '../components/ui';
 import PageGridDistortion from '../components/PageGridDistortion';
 import BackgroundLayer from '../components/BackgroundLayer';
+import { useFarcaster } from '../contexts/FarcasterContext';
 import { 
   HiHome, 
   HiUser,
@@ -31,6 +32,7 @@ import {
 
 export default function Home() {
   const router = useRouter();
+  const { isConnected, user, isReady } = useFarcaster();
   const [activeTab, setActiveTab] = useState<'home' | 'profile'>('home');
   const [mounted, setMounted] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -325,6 +327,31 @@ export default function Home() {
                     <div className="absolute inset-0 crystal-grid animate-[holographic-scan_6s_linear_infinite]" />
                   </div>
                 </div>
+
+                {/* Farcaster Connection Status */}
+                {isReady && (
+                  <div className="flex items-center space-x-2">
+                    {isConnected && user ? (
+                      <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-400/30">
+                        {user.pfpUrl && (
+                          <img 
+                            src={user.pfpUrl} 
+                            alt={user.displayName || user.username || 'User'} 
+                            className="w-6 h-6 rounded-full"
+                          />
+                        )}
+                        <span className="text-xs text-cyan-300">
+                          {user.displayName || user.username || `FID: ${user.fid}`}
+                        </span>
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      </div>
+                    ) : (
+                      <div className="px-3 py-1.5 rounded-lg bg-gray-500/10 border border-gray-400/30">
+                        <span className="text-xs text-gray-400">Not connected</span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// Wallet connection removed - Profile will be adapted for Farcaster later
+import { useFarcaster } from '../contexts/FarcasterContext';
 import SpotlightCard from './SpotlightCard';
 import { 
   mockPsychologists, 
@@ -33,16 +33,28 @@ interface UserProfile {
 }
 
 export default function Profile() {
-  // Wallet connection removed - Profile will be adapted for Farcaster later
-  const connected = false; // Placeholder until Farcaster integration
-  const walletAddress = null; // Placeholder until Farcaster integration
+  const { isConnected, user, walletAddress, getWalletAddress, connect } = useFarcaster();
+  const [currentWalletAddress, setCurrentWalletAddress] = useState<string | null>(walletAddress);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [datasetNFTs, setDatasetNFTs] = useState<DatasetNFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Get wallet address if not already available
   useEffect(() => {
-    if (!connected || !walletAddress) {
+    const fetchWallet = async () => {
+      if (!currentWalletAddress && isConnected) {
+        const addr = await getWalletAddress();
+        if (addr) {
+          setCurrentWalletAddress(addr);
+        }
+      }
+    };
+    fetchWallet();
+  }, [isConnected, currentWalletAddress, getWalletAddress]);
+
+  useEffect(() => {
+    if (!isConnected || !currentWalletAddress) {
       setLoading(false);
       return;
     }
@@ -80,7 +92,7 @@ export default function Profile() {
         const activeYieldPositions = mockYieldPositions.filter(pos => pos.isActive).length;
 
         setProfile({
-          walletAddress: walletAddress,
+          walletAddress: currentWalletAddress,
           hnftAddress,
           joinDate,
           totalEarnings,
@@ -97,7 +109,7 @@ export default function Profile() {
     };
 
     fetchProfileData();
-  }, [connected, walletAddress]);
+  }, [isConnected, currentWalletAddress]);
 
   const formatCurrency = (amount: number, currency: string) => {
     return `${amount.toFixed(2)} ${currency}`;
@@ -129,14 +141,20 @@ export default function Profile() {
     }
   };
 
-  if (!connected) {
+  if (!isConnected) {
     return (
       <div className="psychat-card p-8 text-center">
         <div className="text-6xl mb-4">🔐</div>
-        <h2 className="text-display text-h2 text-white mb-4">Connect Your Wallet</h2>
+        <h2 className="text-display text-h2 text-white mb-4">Connect to Farcaster</h2>
         <p className="text-body text-body-md text-white/80 mb-6">
-          Connect your wallet to view your PsyChat profile and data.
+          Connect your Farcaster account to view your Dimension Service Explorer profile and data.
         </p>
+        <button
+          onClick={connect}
+          className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
+        >
+          Connect Farcaster
+        </button>
       </div>
     );
   }
@@ -166,14 +184,25 @@ export default function Profile() {
         {/* Profile Header */}
         <SpotlightCard className="p-6" spotlightColor="rgba(97, 220, 163, 0.2)">
         <div className="flex items-center space-x-4 mb-4">
-          <div className="w-16 h-16 bg-psy-green/20 rounded-full flex items-center justify-center">
-            <span className="text-2xl">🧠</span>
+          <div className="w-16 h-16 bg-psy-green/20 rounded-full flex items-center justify-center overflow-hidden">
+            {user?.pfpUrl ? (
+              <img src={user.pfpUrl} alt={user.displayName || user.username} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-2xl">🧠</span>
+            )}
           </div>
           <div>
-            <h1 className="text-display text-h1 text-white">Your PsyChat Profile</h1>
+            <h1 className="text-display text-h1 text-white">
+              {user?.displayName || user?.username || 'Your Dimension Service Explorer Profile'}
+            </h1>
             <p className="text-body text-body-sm text-white/60">
-              {profile?.walletAddress ? `${profile.walletAddress.slice(0, 8)}...${profile.walletAddress.slice(-8)}` : 'Wallet not connected'}
+              {user?.username && `@${user.username}`} {user?.fid && `• FID: ${user.fid}`}
             </p>
+            {profile?.walletAddress && (
+              <p className="text-body text-body-xs text-white/50 mt-1">
+                {profile.walletAddress.slice(0, 8)}...{profile.walletAddress.slice(-8)}
+              </p>
+            )}
             {profile?.hnftAddress && (
               <div className="mt-2 text-caption text-psy-green flex items-center">
                 <span className="mr-1">🎫</span>
