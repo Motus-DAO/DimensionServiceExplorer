@@ -70,12 +70,12 @@ export default function FractalesGalleryPage() {
                         className="text-lg font-bold tracking-wider psychat-neon relative"
                         style={{ fontFamily: 'Orbitron, monospace' }}
                       >
-                        <span className="relative z-10">PsyChat</span>
+                        <span className="relative z-10">DSE</span>
                         <span 
                           className="absolute inset-0 text-lg font-bold tracking-wider opacity-40 blur-sm group-hover:opacity-60 transition-opacity duration-300"
                           style={{ color: 'rgba(0, 255, 255, 0.5)', fontFamily: 'Orbitron, monospace' }}
                         >
-                          PsyChat
+                          DSE
                         </span>
                       </h1>
                       <span className="text-xs text-white/70 group-hover:text-cyan-300 transition-colors duration-300">by MotusDAO</span>

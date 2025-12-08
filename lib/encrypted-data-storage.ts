@@ -35,7 +35,7 @@ export function storeEncryptedConversation(
     };
 
     // Store in localStorage for now (in production, this would be on-chain)
-    const key = `psychat_encrypted_${sessionId}`;
+    const key = `dse_encrypted_${sessionId}`;
     localStorage.setItem(key, JSON.stringify(storedData));
     
     console.log('✅ Encrypted conversation data stored locally');
@@ -75,7 +75,7 @@ export function listStoredConversations(): StoredEncryptedData[] {
     // Iterate through localStorage to find all encrypted conversations
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('psychat_encrypted_')) {
+      if (key && key.startsWith('dse_encrypted_')) {
         const stored = localStorage.getItem(key);
         if (stored) {
           try {

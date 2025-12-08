@@ -57,7 +57,7 @@ export default function Profile() {
         
         // Check localStorage for existing identity
         if (typeof window !== 'undefined') {
-          const saved = window.localStorage.getItem('psychat_hnft_pda');
+          const saved = window.localStorage.getItem('dse_hnft_pda');
           if (saved) {
             hnftAddress = saved;
             joinDate = new Date().toISOString().split('T')[0];

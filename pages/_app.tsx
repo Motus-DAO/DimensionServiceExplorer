@@ -19,7 +19,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <div className="min-h-screen psychat-gradient flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🧠</div>
-          <h1 className="text-3xl font-bold text-white mb-4">PsyChat</h1>
+          <h1 className="text-3xl font-bold text-white mb-4">DimensionServiceExplorer</h1>
           <p className="text-white/80">Loading...</p>
         </div>
       </div>

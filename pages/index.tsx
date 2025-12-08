@@ -117,7 +117,7 @@ export default function Home() {
             <div className="w-2 h-2 bg-yellow-500"></div>
             <div className="w-2 h-2 bg-green-500"></div>
             <div className="ml-4 text-gray-300 text-xs font-mono">
-              PsyChat Terminal v1.0.0
+              DimensionServiceExplorer Terminal v1.0.0
             </div>
           </div>
 
@@ -126,7 +126,7 @@ export default function Home() {
             {/* Terminal Prompt */}
             <div className="flex items-center mb-4">
               <span className="text-green-500 mr-2">$</span>
-              <span className="text-gray-400">psychat --init --lunarpunk</span>
+              <span className="text-gray-400">dse --init --lunarpunk</span>
               <div className="w-2 h-4 bg-green-500 ml-1 animate-pulse"></div>
             </div>
 
@@ -305,7 +305,7 @@ export default function Home() {
                             fontFamily: 'Orbitron, monospace'
                           }}
                         >
-                          <span className="relative z-10">PsyChat</span>
+                          <span className="relative z-10">DSE</span>
                           {/* Neon glow effect */}
                           <span 
                             className="absolute inset-0 text-lg font-bold tracking-wider opacity-40 blur-sm group-hover:opacity-60 transition-opacity duration-300"
@@ -314,7 +314,7 @@ export default function Home() {
                               color: 'rgba(0, 255, 255, 0.5)'
                             }}
                           >
-                            PsyChat
+                            DSE
                           </span>
                         </h1>
                         <span className="text-xs text-white/70 group-hover:text-cyan-300 transition-colors duration-300">by MotusDAO</span>

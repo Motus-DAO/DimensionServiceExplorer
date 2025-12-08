@@ -1,8 +1,8 @@
-# 🧠 PsyChat
-## Polkadot-Native Mental Health Platform MVP
+# 🧠 DimensionServiceExplorer
+## Celo-Based Fractales Gallery & Creator Economy
 
-**Built for:** Polkadot Sub Zero   
-**Track:** Polkadot, Arkiv, Kusama, XX Network, Marketing Track  
+**Built for:** Celo Mainnet  
+**Platform:** Farcaster Mini App  
 **Organization:** MotusDAO  
 
 ---
