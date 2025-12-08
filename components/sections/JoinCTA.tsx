@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import ClientWalletButton from '../ClientWalletButton';
 import { useScrollReveal } from '../../lib/hooks/useScrollReveal';
 import { HoloText, HoloPanel, HoloButton } from '../ui/holo';
+import { useRouter } from 'next/router';
 
 const JoinCTASection: React.FC = () => {
   const { ref, motionProps } = useScrollReveal({ direction: 'up', delay: 0.2 });
+  const router = useRouter();
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-6">
@@ -42,8 +43,8 @@ const JoinCTASection: React.FC = () => {
               className="mb-6 max-w-2xl mx-auto"
             >
               <HoloText size="base" className="text-white/80">
-                Connect your wallet and start earning from your mental health data today. 
-                Your privacy is protected, your data is valuable.
+                Explore interactive fractals, capture moments, and mint NFTs. 
+                Join the creator economy with likes and tips.
               </HoloText>
             </motion.div>
             
@@ -68,7 +69,14 @@ const JoinCTASection: React.FC = () => {
                   }}
                 />
                 <div className="relative z-10">
-                  <ClientWalletButton />
+                  <HoloButton
+                    variant="primary"
+                    size="lg"
+                    onClick={() => router.push('/fractales')}
+                    className="px-8 py-3"
+                  >
+                    Explore Fractales
+                  </HoloButton>
                 </div>
               </motion.div>
             </motion.div>
@@ -85,7 +93,7 @@ const JoinCTASection: React.FC = () => {
                 transition={{ delay: 0.7 }}
                 className="flex items-center justify-center"
               >
-                <HoloText size="sm" className="text-white/60">🔒 Your data is encrypted with XX Network E2E encryption</HoloText>
+                <HoloText size="sm" className="text-white/60">🎨 Explore interactive HTML fractals</HoloText>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -93,7 +101,7 @@ const JoinCTASection: React.FC = () => {
                 transition={{ delay: 0.8 }}
                 className="flex items-center justify-center"
               >
-                <HoloText size="sm" className="text-white/60">💰 Earn from data marketplace via Polkadot DEX</HoloText>
+                <HoloText size="sm" className="text-white/60">📸 Capture and mint NFTs</HoloText>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -101,7 +109,7 @@ const JoinCTASection: React.FC = () => {
                 transition={{ delay: 0.9 }}
                 className="flex items-center justify-center"
               >
-                <HoloText size="sm" className="text-white/60">🚀 Auto-compound earnings with Polkadot payments</HoloText>
+                <HoloText size="sm" className="text-white/60">💰 Creator economy with likes and tips</HoloText>
               </motion.div>
             </motion.div>
           </HoloPanel>

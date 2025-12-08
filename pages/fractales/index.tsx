@@ -5,13 +5,8 @@ import PageGridDistortion from '../../components/PageGridDistortion'
 import { HoloPanel, HoloText, HoloButton } from '../../components/ui/holo'
 import MintedGallery from '../../components/fractales/MintedGallery'
 import Dock from '../../components/Dock'
-import ClientWalletButton from '../../components/ClientWalletButton'
 import { 
   HiHome, 
-  HiChat, 
-  HiVideoCamera, 
-  HiShoppingBag, 
-  HiChartBar,
   HiUser,
   HiPhotograph
 } from 'react-icons/hi'
@@ -30,10 +25,6 @@ export default function FractalesIndex() {
           <Dock 
             items={[
               { icon: <HiHome className="text-cyan-400" size={24} />, label: 'Home', onClick: () => router.push('/') },
-              { icon: <HiChat className="text-fuchsia-400" size={24} />, label: 'Chat', onClick: () => router.push('/?tab=chat') },
-              { icon: <HiVideoCamera className="text-emerald-400" size={24} />, label: 'Video', onClick: () => router.push('/?tab=videochat') },
-              { icon: <HiShoppingBag className="text-purple-400" size={24} />, label: 'Marketplace', onClick: () => router.push('/?tab=marketplace') },
-              { icon: <HiChartBar className="text-blue-400" size={24} />, label: 'Dashboard', onClick: () => router.push('/?tab=dashboard') },
               { icon: <HiPhotograph className="text-yellow-400" size={24} />, label: 'Gallery', onClick: () => router.push('/fractales/gallery') },
               { icon: <HiUser className="text-orange-400" size={24} />, label: 'Profile', onClick: () => router.push('/?tab=profile') },
             ]}
@@ -117,10 +108,6 @@ export default function FractalesIndex() {
                 </div>
               </div>
               
-              {/* Wallet Button */}
-              <div className="pr-4">
-                <ClientWalletButton />
-              </div>
             </div>
           </div>
         </header>

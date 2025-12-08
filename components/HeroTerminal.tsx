@@ -5,8 +5,8 @@ import { ComplexMolecule, WaterMolecule } from './ui';
 import DecryptedText from './DecryptedText';
 
 type HeroTerminalProps = {
-  onConnect: () => Promise<void> | void;
-  onNavigate: (tab: 'home' | 'chat' | 'learn') => void;
+  onConnect?: () => Promise<void> | void;
+  onNavigate?: (tab: 'home' | 'chat' | 'learn') => void;
 };
 
 export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProps) {
@@ -155,10 +155,10 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
     };
   };
 
-  const handleStartChat = async () => {
-    // Check if wallet connected, if not connect first
-    await onConnect();
-    onNavigate('chat');
+  const handleExploreFractales = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/fractales';
+    }
   };
 
   return (
@@ -390,13 +390,13 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
               className="p-4 bg-black/20 border-t border-cyan-500/20 flex justify-center items-center"
             >
               <HoloButton
-                onClick={handleStartChat}
+                onClick={handleExploreFractales}
                 variant="primary"
                 size="lg"
                 className="w-full sm:w-auto tracking-wider px-6 py-3 text-sm sm:text-base font-display"
               >
                 <span className="font-display">
-                  Enter the Chat
+                  Explore Fractales
                 </span>
               </HoloButton>
             </motion.div>

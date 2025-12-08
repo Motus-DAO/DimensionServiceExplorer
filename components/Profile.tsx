@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { usePolkadotWallet } from '../contexts/PolkadotWalletContext';
+// Wallet connection removed - Profile will be adapted for Farcaster later
 import SpotlightCard from './SpotlightCard';
 import { 
   mockPsychologists, 
@@ -33,8 +33,9 @@ interface UserProfile {
 }
 
 export default function Profile() {
-  const { isConnected: connected, selectedAccount } = usePolkadotWallet();
-  const walletAddress = selectedAccount?.address || null;
+  // Wallet connection removed - Profile will be adapted for Farcaster later
+  const connected = false; // Placeholder until Farcaster integration
+  const walletAddress = null; // Placeholder until Farcaster integration
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [datasetNFTs, setDatasetNFTs] = useState<DatasetNFT[]>([]);
   const [loading, setLoading] = useState(true);

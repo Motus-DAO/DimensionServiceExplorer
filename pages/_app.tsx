@@ -2,10 +2,8 @@ import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
 import '../styles/globals.css';
 import { GridDistortionProvider } from '../contexts/GridDistortionContext';
-import { PolkadotWalletProvider } from '../contexts/PolkadotWalletContext';
 import { ArkivProvider } from '../contexts/ArkivContext';
 import { HyperbridgeProvider } from '../contexts/HyperbridgeContext';
-import { XXNetworkProvider } from '../contexts/XXNetworkContext';
 import AssistantWidget from '../components/AssistantWidget';
 import { FractalCaptureProvider } from '../contexts/FractalCaptureContext';
 
@@ -30,19 +28,15 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <PolkadotWalletProvider>
-      <ArkivProvider>
-        <HyperbridgeProvider>
-          <XXNetworkProvider>
-            <FractalCaptureProvider>
-              <GridDistortionProvider>
-                <Component {...pageProps} />
-                <AssistantWidget />
-              </GridDistortionProvider>
-            </FractalCaptureProvider>
-          </XXNetworkProvider>
-        </HyperbridgeProvider>
-      </ArkivProvider>
-    </PolkadotWalletProvider>
+    <ArkivProvider>
+      <HyperbridgeProvider>
+        <FractalCaptureProvider>
+          <GridDistortionProvider>
+            <Component {...pageProps} />
+            <AssistantWidget />
+          </GridDistortionProvider>
+        </FractalCaptureProvider>
+      </HyperbridgeProvider>
+    </ArkivProvider>
   );
 }

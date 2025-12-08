@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ethers } from 'ethers';
 import { HoloPanel, HoloText, HoloButton } from '../ui/holo';
 import { HiHeart, HiShare, HiCurrencyDollar } from 'react-icons/hi';
-import { usePolkadotWallet } from '../../contexts/PolkadotWalletContext';
+// Wallet connection removed - no longer required
 import { fetchAllNFTs, FractalNFT, getProvider } from '../../lib/fractales-nft';
 
 interface MintedPhoto {
@@ -35,7 +35,7 @@ function getNameFromAddress(address: string): string {
 }
 
 export default function MintedGallery() {
-  const { isConnected, selectedAccount } = usePolkadotWallet();
+  // Wallet connection removed - app is now wallet-free
   const [photos, setPhotos] = useState<MintedPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [tippingPhoto, setTippingPhoto] = useState<string | null>(null);
@@ -127,7 +127,8 @@ export default function MintedGallery() {
   }, []);
 
   const handleLike = (id: string) => {
-    if (!isConnected) {
+    // Wallet connection no longer required - allow likes for all users
+    if (false) {
       alert('Please connect your wallet to like photos');
       return;
     }
@@ -156,7 +157,8 @@ export default function MintedGallery() {
   };
 
   const handleTip = async (id: string) => {
-    if (!isConnected || !selectedAccount) {
+    // Wallet connection no longer required - tips can work without wallet for now
+    if (false) {
       setTipError('Please connect your wallet to tip creators');
       return;
     }

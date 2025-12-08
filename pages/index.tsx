@@ -1,12 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { usePolkadotWallet } from '../contexts/PolkadotWalletContext';
-import Chat from '../components/Chat';
-import Dashboard from '../components/Dashboard';
-import Marketplace from '../components/Marketplace';
-import VideoChat from '../components/VideoChat';
 import Profile from '../components/Profile';
-import ClientWalletButton from '../components/ClientWalletButton';
 // import LetterGlitch from '../components/backgrounds/LetterGlitch';
 import Dock from '../components/Dock';
 import DecryptedText from '../components/DecryptedText';
@@ -18,10 +12,6 @@ import PageGridDistortion from '../components/PageGridDistortion';
 import BackgroundLayer from '../components/BackgroundLayer';
 import { 
   HiHome, 
-  HiChat, 
-  HiVideoCamera, 
-  HiShoppingBag, 
-  HiChartBar,
   HiUser,
   HiPhotograph
 } from 'react-icons/hi';
@@ -40,9 +30,8 @@ import {
 } from '../components/sections';
 
 export default function Home() {
-  const { isConnected: connected, connect } = usePolkadotWallet();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'home' | 'chat' | 'videochat' | 'marketplace' | 'dashboard' | 'profile'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'profile'>('home');
   const [mounted, setMounted] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
   const [isDockVisible, setIsDockVisible] = useState(true);
@@ -252,10 +241,6 @@ export default function Home() {
           <Dock 
             items={[
               { icon: <HiHome className="text-cyan-400" size={24} />, label: 'Home', onClick: () => setActiveTab('home') },
-              { icon: <HiChat className="text-fuchsia-400" size={24} />, label: 'Chat', onClick: () => setActiveTab('chat') },
-              { icon: <HiVideoCamera className="text-emerald-400" size={24} />, label: 'Video', onClick: () => setActiveTab('videochat') },
-              { icon: <HiShoppingBag className="text-purple-400" size={24} />, label: 'Marketplace', onClick: () => setActiveTab('marketplace') },
-              { icon: <HiChartBar className="text-blue-400" size={24} />, label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
               { icon: <HiPhotograph className="text-yellow-400" size={24} />, label: 'Gallery', onClick: () => router.push('/fractales') },
               { icon: <HiUser className="text-orange-400" size={24} />, label: 'Profile', onClick: () => setActiveTab('profile') },
             ]}
@@ -341,10 +326,6 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Wallet Button - Far right with padding */}
-                <div className="pr-4">
-                  <ClientWalletButton />
-                </div>
               </div>
             </div>
           </header>
@@ -360,138 +341,90 @@ export default function Home() {
             ? 'px-2' // Full width on mobile when dock hidden
             : 'px-4' // Normal padding otherwise
         }`}>
-          {!connected ? (
-            <div className="max-w-4xl mx-auto">
-              <div>
-                {/* Terminal Header */}
-                <div className="bg-gray-800 rounded-t-lg px-4 py-2 flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full" />
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                  <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  <div className="ml-4 text-gray-300 text-sm font-mono">PsyChat Terminal v1.0.0</div>
-                </div>
-                {/* Terminal Body */}
-                <div className="bg-black border-2 border-gray-700 rounded-b-lg p-6 font-mono text-green-400">
-                  {/* Prompt */}
-                  <div className="flex items-center mb-4">
-                    <span className="text-green-400 mr-2">$</span>
-                    <span className="text-gray-400">psychat --welcome --connect you wallet to explore the dApp.</span>
-                    <div className="w-2 h-4 bg-green-400 ml-1 animate-pulse" />
-                  </div>
-                  {/* Content */}
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">ᴪ</div>
-                    <h2 className="text-3xl font-bold text-green-400 mb-4">Welcome to PsyChat</h2>
-                    <p className="text-green-300/80 mb-6 max-w-2xl mx-auto">
-                      The future of mental health is here. Own your therapy data, earn from anonymized insights, and build sustainable wealth through the dataconomy. Your privacy is protected, your data is valuable.
-                    </p>
-                    <div className="space-y-4">
-                      <div className="flex justify-center">
-                        <ClientWalletButton />
-                      </div>
-                      <div className="text-green-300/70 text-sm">
-                        🔒 Your data is encrypted with XX Network E2E encryption<br/>
-                        💰 Earn from data marketplace via Polkadot DEX<br/>
-                        🚀 Auto-compound earnings with Polkadot payments
-                      </div>
+          <>
+            {activeTab === 'home' && (
+              <main>
+                <HeroTerminalSection
+                  onConnect={async () => {
+                    // No wallet connection needed
+                  }}
+                  onNavigate={(tab) => {
+                    if (tab === 'learn') {
+                      const el = document.querySelector('[data-how-it-works]');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }
+                  }}
+                />
+                
+                {/* Art Gallery Button */}
+                <div className="flex justify-center my-8">
+                  <HoloButton
+                    onClick={() => router.push('/fractales')}
+                    variant="primary"
+                    size="lg"
+                    className="px-8 py-3"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <HiPhotograph className="text-yellow-400" size={20} />
+                      <span>View Art Gallery</span>
                     </div>
-                  </div>
+                  </HoloButton>
                 </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              {activeTab === 'home' && (
-                <main>
-                  <HeroTerminalSection
-                    onConnect={async () => {
-                      await connect();
-                    }}
-                    onNavigate={(tab) => {
-                      if (tab === 'chat') {
-                        setActiveTab('chat');
-                      }
-                      if (tab === 'learn') {
-                        const el = document.querySelector('[data-how-it-works]');
-                        if (el) {
-                          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                      }
-                    }}
-                  />
-                  
-                  {/* Art Gallery Button */}
-                  <div className="flex justify-center my-8">
-                    <HoloButton
-                      onClick={() => router.push('/fractales')}
-                      variant="primary"
-                      size="lg"
-                      className="px-8 py-3"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <HiPhotograph className="text-yellow-400" size={20} />
-                        <span>View Art Gallery</span>
-                      </div>
-                    </HoloButton>
-                  </div>
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <DataconomySection />
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <HowItWorksSection />
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <ProblemSolutionSection />
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <FeaturesShowcaseSection />
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <BuyersInsightSection />
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <EcosystemImpactSection />
-                  
-                  {/* Section Divider */}
-                  <div className="my-16">
-                    <HoloDivider variant="horizontal" thickness="medium" />
-                  </div>
-                  
-                  <JoinCTASection />
-                </main>
-              )}
-              {activeTab === 'chat' && <Chat onNavigateToVideo={() => setActiveTab('videochat')} />}
-              {activeTab === 'videochat' && <VideoChat />}
-              {activeTab === 'marketplace' && <Marketplace />}
-              {activeTab === 'dashboard' && <Dashboard />}
-              {activeTab === 'profile' && <Profile />}
-            </>
-          )}
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <DataconomySection />
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <HowItWorksSection />
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <ProblemSolutionSection />
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <FeaturesShowcaseSection />
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <BuyersInsightSection />
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <EcosystemImpactSection />
+                
+                {/* Section Divider */}
+                <div className="my-16">
+                  <HoloDivider variant="horizontal" thickness="medium" />
+                </div>
+                
+                <JoinCTASection />
+              </main>
+            )}
+            {activeTab === 'profile' && <Profile />}
+          </>
         </div>
       </main>
 
