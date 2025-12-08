@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import '../styles/globals.css';
 import { GridDistortionProvider } from '../contexts/GridDistortionContext';
 import { ArkivProvider } from '../contexts/ArkivContext';
+import { FarcasterProvider } from '../contexts/FarcasterContext';
 import AssistantWidget from '../components/AssistantWidget';
 import { FractalCaptureProvider } from '../contexts/FractalCaptureContext';
 
@@ -27,13 +28,15 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <ArkivProvider>
-      <FractalCaptureProvider>
-        <GridDistortionProvider>
-          <Component {...pageProps} />
-          <AssistantWidget />
-        </GridDistortionProvider>
-      </FractalCaptureProvider>
-    </ArkivProvider>
+    <FarcasterProvider>
+      <ArkivProvider>
+        <FractalCaptureProvider>
+          <GridDistortionProvider>
+            <Component {...pageProps} />
+            <AssistantWidget />
+          </GridDistortionProvider>
+        </FractalCaptureProvider>
+      </ArkivProvider>
+    </FarcasterProvider>
   );
 }
