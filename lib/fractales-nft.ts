@@ -125,10 +125,10 @@ export async function fetchNFTsByOwner(
 }
 
 /**
- * Get provider for the network
+ * Get provider for the network (Celo)
  */
 export function getProvider(): ethers.Provider | null {
-  const rpcUrl = (process.env.NEXT_PUBLIC_EVM_RPC_URL || 'https://testnet-passet-hub-eth-rpc.polkadot.io').trim();
+  const rpcUrl = (process.env.NEXT_PUBLIC_EVM_RPC_URL || 'https://forno.celo.org').trim();
   try {
     const rpc = new ethers.JsonRpcProvider(rpcUrl);
     return rpc;
