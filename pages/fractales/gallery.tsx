@@ -64,18 +64,18 @@ export default function FractalesGalleryPage() {
                   <div className="relative z-10 px-3 py-2">
                     <Link 
                       href="/"
-                      className="flex items-center space-x-2 hover:opacity-80 transition-opacity group"
+                      className="flex flex-col hover:opacity-80 transition-opacity group"
                     >
                       <h1 
-                        className="text-lg font-bold tracking-wider psychat-neon relative"
+                        className="text-sm font-bold tracking-wider psychat-neon relative"
                         style={{ fontFamily: 'Orbitron, monospace' }}
                       >
-                        <span className="relative z-10">DSE</span>
+                        <span className="relative z-10">Dimension Service Explorer.</span>
                         <span 
-                          className="absolute inset-0 text-lg font-bold tracking-wider opacity-40 blur-sm group-hover:opacity-60 transition-opacity duration-300"
+                          className="absolute inset-0 text-sm font-bold tracking-wider opacity-40 blur-sm group-hover:opacity-60 transition-opacity duration-300"
                           style={{ color: 'rgba(0, 255, 255, 0.5)', fontFamily: 'Orbitron, monospace' }}
                         >
-                          DSE
+                          Dimension Service Explorer.
                         </span>
                       </h1>
                       <span className="text-xs text-white/70 group-hover:text-cyan-300 transition-colors duration-300">by MotusDAO</span>
