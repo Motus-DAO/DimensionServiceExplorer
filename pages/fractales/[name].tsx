@@ -778,7 +778,7 @@ export default function FractalesPage({ name }: Props) {
           top: 0,
           left: 0,
           zIndex: 1, // Behind the modal and reopen button
-          touchAction: 'none', // Prevent default touch behaviors
+          touchAction: 'auto', // Allow touch interactions (pinch, drag, zoom) for 3D controls
           WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
           pointerEvents: isModalVisible ? 'none' : 'auto', // Allow clicks through when modal is visible
         }}
