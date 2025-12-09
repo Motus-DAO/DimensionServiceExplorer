@@ -779,26 +779,6 @@ export default function FractalesPage({ name }: Props) {
           setIframeLoadStatus('error')
         }}
       />
-      {/* Invisible overlay to capture clicks for reopen button when modal is closed */}
-      {!isModalVisible && (
-        <div
-          style={{
-            position: 'fixed',
-            top: `${reopenButtonPosition.y}px`,
-            left: `${reopenButtonPosition.x}px`,
-            width: '48px', // Approximate button size
-            height: '48px',
-            zIndex: 99, // Above iframe, below button
-            pointerEvents: 'auto',
-            cursor: 'pointer',
-          }}
-          onClick={handleReopenClick}
-          onTouchStart={(e) => {
-            e.preventDefault();
-            handleReopenClick(e as any);
-          }}
-        />
-      )}
       {/* Error fallback */}
       {iframeError && (
         <div className="fixed inset-0 flex items-center justify-center bg-black text-white z-50">
