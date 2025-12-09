@@ -675,8 +675,8 @@ export default function FractalesPage({ name }: Props) {
         <div
           ref={modalRef}
           className="fixed z-[100] max-w-sm"
-          style={{ pointerEvents: 'auto' }}
           style={{
+            pointerEvents: 'auto',
             left: `${modalPosition.x}px`,
             top: `${modalPosition.y}px`,
             cursor: isDragging ? 'grabbing' : 'default',
