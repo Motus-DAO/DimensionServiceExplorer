@@ -1,11 +1,5 @@
 import { ethers } from 'ethers';
-
-const FRACTALES_NFT_ABI = [
-  'function nextTokenId() public view returns (uint256)',
-  'function tokenURI(uint256 tokenId) public view returns (string)',
-  'function ownerOf(uint256 tokenId) public view returns (address)',
-  'function balanceOf(address owner) public view returns (uint256)',
-];
+import { FRACTALES_NFT_READ_ABI } from './fractales-nft-abi';
 
 export interface FractalNFT {
   tokenId: string;
@@ -52,7 +46,7 @@ export async function fetchAllNFTs(
 ): Promise<FractalNFT[]> {
   try {
     const addr = contractAddress.trim();
-    const contract = new ethers.Contract(addr, FRACTALES_NFT_ABI, provider);
+    const contract = new ethers.Contract(addr, FRACTALES_NFT_READ_ABI, provider);
     
     // Get total supply
     const nextTokenId = await contract.nextTokenId();

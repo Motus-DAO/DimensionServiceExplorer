@@ -56,3 +56,4 @@ I updated your manifest from the generic format to Farcaster's required format:
 
 **Note**: The direct URL (`https://dimension-service-explorer.vercel.app`) may work for sharing, but the Universal Link format (`https://farcaster.xyz/miniapps/<app-id>/<app-slug>`) is the official way to share miniapps in Farcaster.
 
+

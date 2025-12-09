@@ -28,6 +28,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
       html = await res.text()
     }
   }
+  
+  // Fix for Farcaster: Remove external font imports and replace with system fonts
+  // This tests if external resources are the issue
+  html = html.replace(
+    /@import\s+url\(['"]https?:\/\/fonts\.googleapis\.com[^)]+\);/gi,
+    ''
+  )
+  // Replace Google Fonts references with system monospace fonts
+  html = html.replace(
+    /font-family:\s*['"]?([^'";,]+)['"]?/gi,
+    (match, fontName) => {
+      // If it's a Google Font, replace with system font
+      if (fontName.includes('VT323') || fontName.includes('Share Tech Mono') || fontName.includes('Press Start 2P')) {
+        return `font-family: 'Courier New', Courier, monospace`
+      }
+      return match
+    }
+  )
 const injection = `
 <script>
 window.addEventListener('message', function(e) {
@@ -174,11 +192,67 @@ export default function FractalesPage({ name, html }: Props) {
   const reopenButtonRef = useRef<HTMLButtonElement>(null)
   const reopenHasDraggedRef = useRef(false)
   const reopenStartPosRef = useRef({ x: 0, y: 0 })
+  const [iframeError, setIframeError] = useState(false)
+  const [iframeLoadStatus, setIframeLoadStatus] = useState<string>('loading')
   
   useEffect(() => {
     registerFrame(name, ref.current)
     return () => registerFrame(name, null)
   }, [name, registerFrame])
+
+  // Monitor iframe loading and errors
+  useEffect(() => {
+    const iframe = ref.current
+    if (!iframe) return
+
+    const handleLoad = () => {
+      try {
+        // Check if iframe content is accessible
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+        if (iframeDoc) {
+          const body = iframeDoc.body
+          if (body && body.children.length > 0) {
+            setIframeLoadStatus('loaded')
+            setIframeError(false)
+            console.log('[Fractal] Iframe loaded successfully')
+          } else {
+            setIframeLoadStatus('empty')
+            console.warn('[Fractal] Iframe loaded but body is empty')
+          }
+        } else {
+          setIframeLoadStatus('blocked')
+          console.warn('[Fractal] Cannot access iframe content (CORS/CSP restriction)')
+        }
+      } catch (e) {
+        setIframeLoadStatus('error')
+        setIframeError(true)
+        console.error('[Fractal] Error accessing iframe:', e)
+      }
+    }
+
+    const handleError = () => {
+      setIframeError(true)
+      setIframeLoadStatus('error')
+      console.error('[Fractal] Iframe error event fired')
+    }
+
+    iframe.addEventListener('load', handleLoad)
+    iframe.addEventListener('error', handleError)
+
+    // Set timeout to detect if iframe never loads
+    const timeout = setTimeout(() => {
+      if (iframeLoadStatus === 'loading') {
+        console.warn('[Fractal] Iframe load timeout')
+        setIframeLoadStatus('timeout')
+      }
+    }, 5000)
+
+    return () => {
+      iframe.removeEventListener('load', handleLoad)
+      iframe.removeEventListener('error', handleError)
+      clearTimeout(timeout)
+    }
+  }, [iframeLoadStatus])
 
   // Initialize modal and reopen button positions on mount
   useEffect(() => {
@@ -674,8 +748,9 @@ export default function FractalesPage({ name, html }: Props) {
       
       const ethersProvider = new ethers.BrowserProvider(provider)
       const signer = await ethersProvider.getSigner()
-      const abi = ['function publicMint(string name, string imageBase64) external returns (uint256)']
-      const c = new ethers.Contract(addr, abi, signer)
+      // Import the ABI from the shared module
+      const { FRACTALES_NFT_MINT_ABI } = await import('../../lib/fractales-nft-abi')
+      const c = new ethers.Contract(addr, FRACTALES_NFT_MINT_ABI, signer)
       let gasLimit: bigint
       try {
         const est = await c.publicMint.estimateGas(name, base64)
@@ -684,11 +759,28 @@ export default function FractalesPage({ name, html }: Props) {
       } catch {
         gasLimit = BigInt(12000000)
       }
+      setStatus('Submitting transaction...')
       const tx = await c.publicMint(name, base64, { gasLimit })
+      setStatus('Waiting for confirmation...')
       const rec = await tx.wait()
-      setStatus(String(rec?.hash || 'Minted'))
+      if (rec?.hash) {
+        setStatus(rec.hash)
+        // Clear captured image after successful mint
+        setCapturedUrl(null)
+      } else {
+        setStatus('Minted successfully!')
+      }
     } catch (e: any) {
-      setStatus('Mint failed: ' + (e.message || 'Unknown error'))
+      console.error('Mint error:', e)
+      let errorMsg = 'Mint failed: '
+      if (e.message) {
+        errorMsg += e.message
+      } else if (e.reason) {
+        errorMsg += e.reason
+      } else {
+        errorMsg += 'Unknown error'
+      }
+      setStatus(errorMsg)
     }
     setBusy(false)
   }
@@ -782,7 +874,34 @@ export default function FractalesPage({ name, html }: Props) {
           </HoloPanel>
         </div>
       )}
-      <iframe ref={ref} srcDoc={html} style={{ width: '100%', height: '100vh', border: 'none' }} />
+      <iframe 
+        ref={ref} 
+        srcDoc={html} 
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+        style={{ width: '100%', height: '100vh', border: 'none' }}
+        title={`Fractal: ${name}`}
+        onError={() => {
+          setIframeError(true)
+          setIframeLoadStatus('error')
+        }}
+      />
+      {/* Error fallback */}
+      {iframeError && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black text-white z-50">
+          <div className="text-center p-8 max-w-md">
+            <h2 className="text-2xl mb-4 text-red-400">Fractal Failed to Load</h2>
+            <p className="mb-4 text-gray-300">
+              The fractal may not be compatible with Farcaster's security restrictions.
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Status: {iframeLoadStatus}
+            </p>
+            <p className="text-xs text-gray-600">
+              Common issues: External fonts blocked, Canvas restrictions, or CSP violations.
+            </p>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

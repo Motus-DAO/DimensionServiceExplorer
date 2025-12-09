@@ -12,11 +12,10 @@ export default function TerminalLoader({ onComplete, duration = 6000 }: Terminal
   const [showLoader, setShowLoader] = useState(true);
 
   const lines = [
-    "Welcome to the Lunarpunk world,",
-    "A new kind of Liquid Public Goods.",
-    "An AI Dataconomy that empowers humans.",
-    "From Degen to Regen tokenomics.",
-    "Self-custody and sovereignty.",
+    "Dimensions are waiting for you,",
+    "Explore them,",
+    "Mint them,",
+    "Earn in the creators economy.",
     "This is the future of mental health in Web3."
   ];
 

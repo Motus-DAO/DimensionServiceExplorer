@@ -6,7 +6,7 @@ import Dock from '../components/Dock';
 import DecryptedText from '../components/DecryptedText';
 import FaultyTerminal from '../components/FaultyTerminal';
 // import TerminalLoader from '../components/TerminalLoader';
-import { HoloPanel, HoloButton, HoloText, HoloDivider } from '../components/ui/holo';
+import { HoloPanel, HoloText } from '../components/ui/holo';
 import { ComplexMolecule, WaterMolecule } from '../components/ui';
 import PageGridDistortion from '../components/PageGridDistortion';
 import BackgroundLayer from '../components/BackgroundLayer';
@@ -20,14 +20,7 @@ import { useRouter } from 'next/router';
 
 // Section Components
 import {
-  HeroTerminalSection,
-  HowItWorksSection,
-  DataconomySection,
-  ProblemSolutionSection,
-  FeaturesShowcaseSection,
-  BuyersInsightSection,
-  EcosystemImpactSection,
-  JoinCTASection
+  HeroTerminalSection
 } from '../components/sections';
 
 export default function Home() {
@@ -373,70 +366,6 @@ export default function Home() {
                     }
                   }}
                 />
-                
-                {/* Art Gallery Button */}
-                <div className="flex justify-center my-8">
-                  <HoloButton
-                    onClick={() => router.push('/fractales')}
-                    variant="primary"
-                    size="lg"
-                    className="px-8 py-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <HiPhotograph className="text-yellow-400" size={20} />
-                      <span>View Art Gallery</span>
-                    </div>
-                  </HoloButton>
-                </div>
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <DataconomySection />
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <HowItWorksSection />
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <ProblemSolutionSection />
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <FeaturesShowcaseSection />
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <BuyersInsightSection />
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <EcosystemImpactSection />
-                
-                {/* Section Divider */}
-                <div className="my-16">
-                  <HoloDivider variant="horizontal" thickness="medium" />
-                </div>
-                
-                <JoinCTASection />
               </main>
             )}
             {activeTab === 'profile' && <Profile />}
