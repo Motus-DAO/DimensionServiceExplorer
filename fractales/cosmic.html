@@ -70,6 +70,8 @@
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
+      // Allow native touch gestures for OrbitControls
+      renderer.domElement.style.touchAction = 'auto';
       document.getElementById('container').appendChild(renderer.domElement);
     
       clock = new THREE.Clock();
@@ -125,9 +127,6 @@
     
       window.addEventListener('resize', onWindowResize, false);
       window.addEventListener('orientationchange', onOrientationChange, false);
-      renderer.domElement.addEventListener('touchstart', onTouchStart, false);
-      renderer.domElement.addEventListener('touchmove', onTouchMove, false);
-      renderer.domElement.addEventListener('touchend', onTouchEnd, false);
     
       document.getElementById('loading').style.display = 'none';
     
@@ -968,37 +967,6 @@
     
     function onOrientationChange() {
       onWindowResize();
-    }
-    
-    function onTouchStart(event) {
-      event.preventDefault();
-      event.clientX = event.touches[0].clientX;
-      event.clientY = event.touches[0].clientY;
-      onMouseDown(event);
-    }
-    
-    function onTouchMove(event) {
-      event.preventDefault();
-      event.clientX = event.touches[0].clientX;
-      event.clientY = event.touches[0].clientY;
-      onMouseMove(event);
-    }
-    
-    function onTouchEnd(event) {
-      event.preventDefault();
-      onMouseUp(event);
-    }
-    
-    function onMouseDown(event) {
-      // Implement mouse down logic here
-    }
-    
-    function onMouseMove(event) {
-      // Implement mouse move logic here
-    }
-    
-    function onMouseUp(event) {
-      // Implement mouse up logic here
     }
     
     function animate() {
