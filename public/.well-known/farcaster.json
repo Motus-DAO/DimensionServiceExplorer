@@ -1,11 +1,8 @@
 {
-  "miniapp": {
-    "version": "1",
-    "name": "Dimension Service Explorer",
-    "iconUrl": "https://dimension-service-explorer.vercel.app/favicon.ico",
-    "homeUrl": "https://dimension-service-explorer.vercel.app",
-    "splashImageUrl": "https://dimension-service-explorer.vercel.app/favicon.ico",
-    "splashBackgroundColor": "#0B101A",
-    "tagline": "Explore dimensions, mint experiences, earn in the creators economy"
-  }
+  "name": "Dimension Service Explorer",
+  "description": "Inner and digital explorations to be minted in the creator's economy.",
+  "iconUrl": "https://dimension-service-explorer.vercel.app/favicon.ico",
+  "splashImageUrl": "https://dimension-service-explorer.vercel.app/favicon.ico",
+  "splashBackgroundColor": "#0B101A",
+  "url": "https://dimension-service-explorer.vercel.app"
 }
