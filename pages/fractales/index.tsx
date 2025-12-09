@@ -165,13 +165,13 @@ export default function FractalesIndex() {
             {/* Content */}
             <div className="relative z-10 p-6 text-center">
               <HoloText size="lg" weight="bold" className="text-cyan-400 mb-2">
-                EXPECT CHAOS
+                Dimension Service Explorer
               </HoloText>
               <p className="text-white/60 text-sm">
-                Built for Polkadot Sub Zero • MotusDAO • 
-                <span className="text-green-400"> XX Network</span> • 
-                <span className="text-blue-400"> Arkiv</span> • 
-                <span className="text-purple-400"> Kusama</span>
+                Built for the Psychedelic Renaissance • MotusDAO • 
+                <span className="text-green-400"> DeSci</span> • 
+                <span className="text-blue-400"> DePsy</span> • 
+                <span className="text-purple-400"> Celo</span>
               </p>
             </div>
 

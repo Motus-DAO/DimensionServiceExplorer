@@ -206,7 +206,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
         <div
           className="bg-black/40 backdrop-blur-md border border-cyan-500/30 rounded-md overflow-hidden shadow-2xl crt-curvature"
           role="region"
-          aria-label="PsyChat interactive terminal hero"
+          aria-label="Dimension Service Explorer terminal"
           onClick={() => {}}
         >
           {/* Header */}
@@ -214,7 +214,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
             <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <div className="ml-4 text-gray-300 text-caption text-mono select-none">PsyChat Terminal v1.1</div>
+            <div className="ml-4 text-gray-300 text-caption text-mono select-none">DSE Terminal v1.1</div>
           </div>
 
           {/* Body */}
@@ -229,7 +229,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
             >
               {/* Command line - Always visible and fixed at top */}
               <div className="text-green-500 mb-4">
-                $ psychat --public-goods --lunarpunks
+                dimension-service-explorer $ dse --init --lunarpunk
               </div>
 
               {/* Staged Terminal Content */}
@@ -243,7 +243,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`line1-${animationKey}`}
-                            text="✓ Decentralized privacy infrastructure"
+                            text="✓ Explore infinite dimensions"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -259,7 +259,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`line2-${animationKey}`}
-                            text="✓ Censorship-resistant communication"
+                            text="✓ Mint unique fractal NFTs"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -275,7 +275,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`line3-${animationKey}`}
-                            text="✓ Data sovereignty: 100% user-owned"
+                            text="✓ Earn in the creator economy"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -291,7 +291,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`line4-${animationKey}`}
-                            text="✓ Open source privacy tools"
+                            text="✓ Self-custody and sovereignty"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -307,7 +307,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`line5-${animationKey}`}
-                            text="✓ XX Network E2E encryption active"
+                            text="✓ Web3 mental health future"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -329,7 +329,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`bullet1-${animationKey}`}
-                            text="- Data marketplace + AMM + RWAs"
+                            text="- Dimensions are waiting for you"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -345,7 +345,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`bullet2-${animationKey}`}
-                            text="- Built for everyone"
+                            text="- Mint them, explore them"
                             speed={80}
                             maxIterations={15}
                             sequential={true}
@@ -361,7 +361,7 @@ export default function HeroTerminal({ onConnect, onNavigate }: HeroTerminalProp
                         <div>
                           <DecryptedText
                             key={`bullet3-${animationKey}`}
-                            text="- Own your data"
+                            text="- Liquid Public Goods ecosystem"
                             speed={80}
                             maxIterations={15}
                             sequential={true}

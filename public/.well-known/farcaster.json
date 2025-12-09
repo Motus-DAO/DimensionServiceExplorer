@@ -1,34 +1,11 @@
 {
-  "name": "Dimension Service Explorer",
-  "description": "Find peace of mind through generative art & creators economy. Explore fractals, mint NFTs, and earn PSY tokens on Celo.",
-  "version": "1.0.0",
-  "author": {
-    "name": "MotusDAO",
-    "url": "https://motusdao.org"
-  },
-  "entry_point": "/",
-  "permissions": [
-    "read_casts",
-    "write_casts",
-    "read_user",
-    "read_wallet"
-  ],
-  "icons": [
-    {
-      "src": "/favicon.ico",
-      "sizes": "64x64",
-      "type": "image/x-icon"
-    }
-  ],
-  "splash": {
-    "src": "/favicon.ico",
-    "sizes": "512x512",
-    "type": "image/x-icon",
-    "backgroundColor": "#0B101A"
-  },
-  "tagline": "Explore dimensions, mint experiences, earn in the creators economy",
-  "allowedDomains": [
-    "dimension-service-explorer.vercel.app",
-    "*.vercel.app"
-  ]
+  "miniapp": {
+    "version": "1",
+    "name": "Dimension Service Explorer",
+    "iconUrl": "https://dimension-service-explorer.vercel.app/favicon.ico",
+    "homeUrl": "https://dimension-service-explorer.vercel.app",
+    "splashImageUrl": "https://dimension-service-explorer.vercel.app/favicon.ico",
+    "splashBackgroundColor": "#0B101A",
+    "tagline": "Explore dimensions, mint experiences, earn in the creators economy"
+  }
 }

@@ -6,7 +6,7 @@ interface TerminalLoaderProps {
   duration?: number;
 }
 
-export default function TerminalLoader({ onComplete, duration = 8000 }: TerminalLoaderProps) {
+export default function TerminalLoader({ onComplete, duration = 6000 }: TerminalLoaderProps) {
   const [currentLine, setCurrentLine] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -53,20 +53,20 @@ export default function TerminalLoader({ onComplete, duration = 8000 }: Terminal
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
           <div className="ml-4 text-gray-300 text-sm font-mono">
-            PsyChat Terminal v1.0.0
+            Dimension Service Explorer Terminal v1.0.0
           </div>
         </div>
 
         <div className="bg-black border-2 border-gray-700 rounded-b-lg p-6 font-mono text-green-400 min-h-[400px]">
           <div className="flex items-center mb-4">
-            <span className="text-green-400 mr-2">$</span>
-            <span className="text-gray-400">psychat --init --lunarpunk</span>
+            <span className="text-green-400 mr-2">dimension-service-explorer $</span>
+            <span className="text-gray-400">dse --init --lunarpunk</span>
             <div className="w-2 h-4 bg-green-400 ml-1 animate-pulse"></div>
           </div>
 
           <div className="mb-6">
             <div className="flex items-center space-x-2 mb-2">
-              <span className="text-yellow-400">Loading the Digital Renaissance...</span>
+              <span className="text-yellow-400">Loading The Digital Renaissance...</span>
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>

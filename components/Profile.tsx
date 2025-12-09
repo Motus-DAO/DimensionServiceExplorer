@@ -63,7 +63,7 @@ export default function Profile() {
       try {
         setLoading(true);
         
-        // Placeholder for checking DID identity (to be replaced with Polkadot DID check)
+        // Placeholder for checking DID identity
         let hnftAddress: string | null = null;
         let joinDate: string | null = null;
         

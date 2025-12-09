@@ -135,7 +135,7 @@ export default function Home() {
             {/* Welcome Message with Decrypted Animation */}
             <div className="space-y-2 mb-6">
               <DecryptedText
-                text="Welcome to the Lunarpunk world,"
+                text="Welcome to the Dimension Service Explorer,"
                 speed={80}
                 maxIterations={15}
                 sequential={true}
@@ -157,7 +157,7 @@ export default function Home() {
                 animateOn="view"
               />
               <DecryptedText
-                text="An AI Dataconomy that empowers humans."
+                text="Dimensions that empowers humans."
                 speed={80}
                 maxIterations={15}
                 sequential={true}
@@ -178,17 +178,7 @@ export default function Home() {
                 encryptedClassName="text-gray-500"
                 animateOn="view"
               />
-              <DecryptedText
-                text="Self-custody and sovereignty."
-                speed={80}
-                maxIterations={15}
-                sequential={true}
-                revealDirection="start"
-                characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-                className="text-green-500"
-                encryptedClassName="text-gray-500"
-                animateOn="view"
-              />
+    
               <DecryptedText
                 text="This is the future of mental health in Web3."
                 speed={80}
@@ -222,7 +212,6 @@ export default function Home() {
             <div className="mt-8 pt-4 border-t border-gray-500">
               <div className="text-gray-400 text-sm">
                 <div>Initializing Web3 connection...</div>
-                <div>Loading AI models...</div>
                 <div>Setting up decentralized storage...</div>
               </div>
             </div>

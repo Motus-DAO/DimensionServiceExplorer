@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useFractalCapture } from '../../contexts/FractalCaptureContext'
 import { useFarcaster } from '../../contexts/FarcasterContext'
 import { HoloPanel, HoloButton, HoloText } from '../../components/ui/holo'
@@ -156,16 +156,285 @@ export default function FractalesPage({ name, html }: Props) {
   const { registerFrame, capture } = useFractalCapture()
   const { getWalletAddress, walletAddress, isConnected } = useFarcaster()
   const ref = useRef<HTMLIFrameElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
   const [account, setAccount] = useState<string>('')
   const [status, setStatus] = useState<string>('')
   const [capturedUrl, setCapturedUrl] = useState<string | null>(null)
+  const [isModalVisible, setIsModalVisible] = useState(true)
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 })
+  const [reopenButtonPosition, setReopenButtonPosition] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [isReopenDragging, setIsReopenDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const isDraggingRef = useRef(false)
+  const isReopenDraggingRef = useRef(false)
+  const dragOffsetRef = useRef({ x: 0, y: 0 })
+  const reopenButtonRef = useRef<HTMLButtonElement>(null)
+  const reopenHasDraggedRef = useRef(false)
+  const reopenStartPosRef = useRef({ x: 0, y: 0 })
   
   useEffect(() => {
     registerFrame(name, ref.current)
     return () => registerFrame(name, null)
   }, [name, registerFrame])
+
+  // Initialize modal and reopen button positions on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const defaultX = window.innerWidth - 400 // Default right position
+      const defaultY = (window.innerHeight / 2) - 200 // Middle of screen (assuming modal height ~400px)
+      setModalPosition({ x: defaultX, y: defaultY })
+      setReopenButtonPosition({ x: defaultX, y: defaultY })
+    }
+  }, [])
+
+  // When modal closes, update reopen button position to modal's position
+  useEffect(() => {
+    if (!isModalVisible) {
+      setReopenButtonPosition(modalPosition)
+    }
+  }, [isModalVisible, modalPosition])
+
+  // Handle window resize to keep modal and reopen button in bounds
+  useEffect(() => {
+    const handleResize = () => {
+      if (modalRef.current) {
+        const rect = modalRef.current.getBoundingClientRect()
+        const maxX = window.innerWidth - rect.width
+        const maxY = window.innerHeight - rect.height
+        setModalPosition(prev => ({
+          x: Math.min(Math.max(0, prev.x), maxX),
+          y: Math.min(Math.max(0, prev.y), maxY)
+        }))
+      }
+      if (reopenButtonRef.current) {
+        const rect = reopenButtonRef.current.getBoundingClientRect()
+        const maxX = window.innerWidth - rect.width
+        const maxY = window.innerHeight - rect.height
+        setReopenButtonPosition(prev => ({
+          x: Math.min(Math.max(0, prev.x), maxX),
+          y: Math.min(Math.max(0, prev.y), maxY)
+        }))
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Mouse drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (modalRef.current) {
+      const rect = modalRef.current.getBoundingClientRect()
+      const offset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      }
+      setDragOffset(offset)
+      dragOffsetRef.current = offset
+      setIsDragging(true)
+      isDraggingRef.current = true
+    }
+  }
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isDraggingRef.current && modalRef.current) {
+      const newX = e.clientX - dragOffsetRef.current.x
+      const newY = e.clientY - dragOffsetRef.current.y
+      const rect = modalRef.current.getBoundingClientRect()
+      const maxX = window.innerWidth - rect.width
+      const maxY = window.innerHeight - rect.height
+      setModalPosition({
+        x: Math.min(Math.max(0, newX), maxX),
+        y: Math.min(Math.max(0, newY), maxY)
+      })
+    }
+  }, [])
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+    isDraggingRef.current = false
+  }, [])
+
+  // Touch drag handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (modalRef.current) {
+      const touch = e.touches[0]
+      const rect = modalRef.current.getBoundingClientRect()
+      const offset = {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      }
+      setDragOffset(offset)
+      dragOffsetRef.current = offset
+      setIsDragging(true)
+      isDraggingRef.current = true
+    }
+  }
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (isDraggingRef.current && modalRef.current && e.touches.length > 0) {
+      const touch = e.touches[0]
+      const newX = touch.clientX - dragOffsetRef.current.x
+      const newY = touch.clientY - dragOffsetRef.current.y
+      const rect = modalRef.current.getBoundingClientRect()
+      const maxX = window.innerWidth - rect.width
+      const maxY = window.innerHeight - rect.height
+      setModalPosition({
+        x: Math.min(Math.max(0, newX), maxX),
+        y: Math.min(Math.max(0, newY), maxY)
+      })
+    }
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false)
+    isDraggingRef.current = false
+  }, [])
+
+  // Reopen button drag handlers
+  const handleReopenMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (reopenButtonRef.current) {
+      reopenHasDraggedRef.current = false
+      reopenStartPosRef.current = { x: e.clientX, y: e.clientY }
+      const offset = {
+        x: e.clientX - reopenButtonPosition.x,
+        y: e.clientY - reopenButtonPosition.y
+      }
+      setDragOffset(offset)
+      dragOffsetRef.current = offset
+      setIsReopenDragging(true)
+      isReopenDraggingRef.current = true
+    }
+  }
+
+  const handleReopenMouseMove = useCallback((e: MouseEvent) => {
+    if (isReopenDraggingRef.current && reopenButtonRef.current) {
+      // Check if we've actually moved (dragged)
+      const moveDistance = Math.sqrt(
+        Math.pow(e.clientX - reopenStartPosRef.current.x, 2) +
+        Math.pow(e.clientY - reopenStartPosRef.current.y, 2)
+      )
+      if (moveDistance > 5) {
+        reopenHasDraggedRef.current = true
+      }
+      
+      const newX = e.clientX - dragOffsetRef.current.x
+      const newY = e.clientY - dragOffsetRef.current.y
+      const rect = reopenButtonRef.current.getBoundingClientRect()
+      const maxX = window.innerWidth - rect.width
+      const maxY = window.innerHeight - rect.height
+      setReopenButtonPosition({
+        x: Math.min(Math.max(0, newX), maxX),
+        y: Math.min(Math.max(0, newY), maxY)
+      })
+    }
+  }, [])
+
+  const handleReopenMouseUp = useCallback((e?: MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    setIsReopenDragging(false)
+    isReopenDraggingRef.current = false
+  }, [])
+
+  const handleReopenTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (reopenButtonRef.current && e.touches.length > 0) {
+      const touch = e.touches[0]
+      reopenHasDraggedRef.current = false
+      reopenStartPosRef.current = { x: touch.clientX, y: touch.clientY }
+      const offset = {
+        x: touch.clientX - reopenButtonPosition.x,
+        y: touch.clientY - reopenButtonPosition.y
+      }
+      setDragOffset(offset)
+      dragOffsetRef.current = offset
+      setIsReopenDragging(true)
+      isReopenDraggingRef.current = true
+    }
+  }
+
+  const handleReopenTouchMove = useCallback((e: TouchEvent) => {
+    if (isReopenDraggingRef.current && reopenButtonRef.current && e.touches.length > 0) {
+      e.preventDefault()
+      const touch = e.touches[0]
+      
+      // Check if we've actually moved (dragged)
+      const moveDistance = Math.sqrt(
+        Math.pow(touch.clientX - reopenStartPosRef.current.x, 2) +
+        Math.pow(touch.clientY - reopenStartPosRef.current.y, 2)
+      )
+      if (moveDistance > 5) {
+        reopenHasDraggedRef.current = true
+      }
+      
+      const newX = touch.clientX - dragOffsetRef.current.x
+      const newY = touch.clientY - dragOffsetRef.current.y
+      const rect = reopenButtonRef.current.getBoundingClientRect()
+      const maxX = window.innerWidth - rect.width
+      const maxY = window.innerHeight - rect.height
+      setReopenButtonPosition({
+        x: Math.min(Math.max(0, newX), maxX),
+        y: Math.min(Math.max(0, newY), maxY)
+      })
+    }
+  }, [])
+
+  const handleReopenTouchEnd = useCallback((e?: TouchEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    setIsReopenDragging(false)
+    isReopenDraggingRef.current = false
+  }, [])
+
+  const handleReopenClick = (e: React.MouseEvent) => {
+    // Only open modal if we didn't drag
+    if (!reopenHasDraggedRef.current) {
+      setIsModalVisible(true)
+    }
+    reopenHasDraggedRef.current = false
+  }
+
+  // Attach global event listeners for reopen button dragging
+  useEffect(() => {
+    if (isReopenDragging) {
+      document.addEventListener('mousemove', handleReopenMouseMove)
+      document.addEventListener('mouseup', handleReopenMouseUp)
+      document.addEventListener('touchmove', handleReopenTouchMove as any)
+      document.addEventListener('touchend', handleReopenTouchEnd)
+      return () => {
+        document.removeEventListener('mousemove', handleReopenMouseMove)
+        document.removeEventListener('mouseup', handleReopenMouseUp)
+        document.removeEventListener('touchmove', handleReopenTouchMove as any)
+        document.removeEventListener('touchend', handleReopenTouchEnd)
+      }
+    }
+  }, [isReopenDragging, handleReopenMouseMove, handleReopenMouseUp, handleReopenTouchMove, handleReopenTouchEnd])
+
+  // Attach global event listeners for dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener('touchmove', handleTouchMove as any)
+      document.addEventListener('touchend', handleTouchEnd)
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+        document.removeEventListener('touchmove', handleTouchMove as any)
+        document.removeEventListener('touchend', handleTouchEnd)
+      }
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
 
   // Get wallet address from Farcaster
   useEffect(() => {
@@ -425,34 +694,94 @@ export default function FractalesPage({ name, html }: Props) {
   }
   return (
     <main className="min-h-screen bg-black">
-      <div className="fixed top-4 right-4 z-50 max-w-sm">
-        <HoloPanel variant="elevated" size="lg" className="p-4">
-          <HoloText size="base" weight="bold" className="text-cyan-400">{name}</HoloText>
-          <div className="mt-3 flex items-center space-x-3">
-            <HoloButton variant="primary" onClick={onCopy} disabled={busy}>{busy ? 'Capturing...' : copied ? 'Copied' : 'Copy Image Base64'}</HoloButton>
-          </div>
-          <div className="mt-3 flex items-center space-x-3">
-            <HoloButton variant="primary" onClick={onConnect}>{account ? 'Connected' : 'Connect Wallet'}</HoloButton>
-            <HoloButton variant="secondary" onClick={onMint} disabled={busy}>Mint NFT</HoloButton>
-            <HoloButton variant="secondary" onClick={onCaptureScreen} disabled={busy}>Capture Screen</HoloButton>
-            {capturedUrl && <HoloButton variant="secondary" onClick={onClearCapture} disabled={busy}>Clear Screenshot</HoloButton>}
-          </div>
-          {capturedUrl && (
-            <div className="mt-3">
-              <img src={capturedUrl} alt="screenshot" style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8 }} />
+      {/* Reopen button - shown when modal is closed, draggable */}
+      {!isModalVisible && (
+        <button
+          ref={reopenButtonRef}
+          onClick={handleReopenClick}
+          className="fixed z-50 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg p-3 transition-all duration-200 shadow-lg backdrop-blur-sm"
+          style={{ 
+            cursor: isReopenDragging ? 'grabbing' : 'grab',
+            left: `${reopenButtonPosition.x}px`,
+            top: `${reopenButtonPosition.y}px`,
+            touchAction: 'none',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            MozUserSelect: 'none',
+            msUserSelect: 'none'
+          }}
+          onMouseDown={handleReopenMouseDown}
+          onTouchStart={handleReopenTouchStart}
+          aria-label="Open modal"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-400">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+            <path d="M2 17L12 22L22 17" />
+            <path d="M2 12L12 17L22 12" />
+          </svg>
+        </button>
+      )}
+
+      {/* Draggable Modal */}
+      {isModalVisible && (
+        <div
+          ref={modalRef}
+          className="fixed z-50 max-w-sm"
+          style={{
+            left: `${modalPosition.x}px`,
+            top: `${modalPosition.y}px`,
+            cursor: isDragging ? 'grabbing' : 'default',
+            touchAction: 'none',
+            userSelect: 'none'
+          }}
+        >
+          <HoloPanel variant="elevated" size="lg" className="p-4">
+            {/* Drag handle and close button header */}
+            <div
+              className="flex items-center justify-between mb-2 pb-2 border-b border-cyan-500/20 cursor-grab active:cursor-grabbing"
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+            >
+              <HoloText size="base" weight="bold" className="text-cyan-400">{name}</HoloText>
+              <button
+                onClick={() => setIsModalVisible(false)}
+                className="ml-2 text-white/60 hover:text-white/100 transition-colors p-1 rounded hover:bg-white/10"
+                aria-label="Close modal"
+                style={{ cursor: 'pointer' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
-          )}
-          {status && (
-            <div className="mt-3 text-white/80 text-xs break-all">
-              {status.startsWith('0x') ? (
-                <a href={`https://celoscan.io/tx/${status}`} target="_blank" rel="noreferrer" className="text-cyan-400 underline">View Tx on CeloScan</a>
-              ) : (
-                status
-              )}
+
+            <div className="mt-3 flex items-center space-x-3">
+              <HoloButton variant="primary" onClick={onCopy} disabled={busy}>{busy ? 'Capturing...' : copied ? 'Copied' : 'Copy Image Base64'}</HoloButton>
             </div>
-          )}
-        </HoloPanel>
-      </div>
+            <div className="mt-3 flex items-center space-x-3">
+              <HoloButton variant="primary" onClick={onConnect}>{account ? 'Connected' : 'Connect Wallet'}</HoloButton>
+              <HoloButton variant="secondary" onClick={onMint} disabled={busy}>Mint NFT</HoloButton>
+              <HoloButton variant="secondary" onClick={onCaptureScreen} disabled={busy}>Capture Screen</HoloButton>
+              {capturedUrl && <HoloButton variant="secondary" onClick={onClearCapture} disabled={busy}>Clear Screenshot</HoloButton>}
+            </div>
+            {capturedUrl && (
+              <div className="mt-3">
+                <img src={capturedUrl} alt="screenshot" style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8 }} />
+              </div>
+            )}
+            {status && (
+              <div className="mt-3 text-white/80 text-xs break-all">
+                {status.startsWith('0x') ? (
+                  <a href={`https://celoscan.io/tx/${status}`} target="_blank" rel="noreferrer" className="text-cyan-400 underline">View Tx on CeloScan</a>
+                ) : (
+                  status
+                )}
+              </div>
+            )}
+          </HoloPanel>
+        </div>
+      )}
       <iframe ref={ref} srcDoc={html} style={{ width: '100%', height: '100vh', border: 'none' }} />
     </main>
   )
