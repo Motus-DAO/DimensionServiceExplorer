@@ -646,7 +646,8 @@ export default function FractalesPage({ name }: Props) {
         <button
           ref={reopenButtonRef}
           onClick={handleReopenClick}
-          className="fixed z-50 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg p-3 transition-all duration-200 shadow-lg backdrop-blur-sm"
+          className="fixed z-[100] bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg p-3 transition-all duration-200 shadow-lg backdrop-blur-sm"
+          style={{ pointerEvents: 'auto' }}
           style={{ 
             cursor: isReopenDragging ? 'grabbing' : 'grab',
             left: `${reopenButtonPosition.x}px`,
@@ -673,7 +674,8 @@ export default function FractalesPage({ name }: Props) {
       {isModalVisible && (
         <div
           ref={modalRef}
-          className="fixed z-50 max-w-sm"
+          className="fixed z-[100] max-w-sm"
+          style={{ pointerEvents: 'auto' }}
           style={{
             left: `${modalPosition.x}px`,
             top: `${modalPosition.y}px`,
@@ -753,8 +755,10 @@ export default function FractalesPage({ name }: Props) {
           position: 'fixed',
           top: 0,
           left: 0,
+          zIndex: 1, // Behind the modal
           touchAction: 'none', // Prevent default touch behaviors
           WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+          pointerEvents: isModalVisible ? 'none' : 'auto', // Allow clicks through when modal is visible
         }}
         title={`Fractal: ${name}`}
         allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
