@@ -263,6 +263,11 @@ export default function FractalesPage({ name }: Props) {
       e.preventDefault()
       e.stopPropagation()
     }
+    // Treat a tap/click (no drag) as an open action
+    if (!reopenHasDraggedRef.current) {
+      setIsModalVisible(true)
+    }
+    reopenHasDraggedRef.current = false
     setIsReopenDragging(false)
     isReopenDraggingRef.current = false
   }, [])
@@ -316,6 +321,11 @@ export default function FractalesPage({ name }: Props) {
       e.preventDefault()
       e.stopPropagation()
     }
+    // Treat a tap (no drag) as an open action
+    if (!reopenHasDraggedRef.current) {
+      setIsModalVisible(true)
+    }
+    reopenHasDraggedRef.current = false
     setIsReopenDragging(false)
     isReopenDraggingRef.current = false
   }, [])
