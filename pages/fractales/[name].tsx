@@ -645,7 +645,13 @@ export default function FractalesPage({ name }: Props) {
       {!isModalVisible && (
         <button
           ref={reopenButtonRef}
-          onClick={handleReopenClick}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!reopenHasDraggedRef.current) {
+              handleReopenClick(e);
+            }
+          }}
           className="fixed z-[100] bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg p-3 transition-all duration-200 shadow-lg backdrop-blur-sm"
           style={{ 
             pointerEvents: 'auto',
@@ -656,10 +662,16 @@ export default function FractalesPage({ name }: Props) {
             userSelect: 'none',
             WebkitUserSelect: 'none',
             MozUserSelect: 'none',
-            msUserSelect: 'none'
+            msUserSelect: 'none',
+            position: 'relative',
+            zIndex: 100,
           }}
           onMouseDown={handleReopenMouseDown}
-          onTouchStart={handleReopenTouchStart}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleReopenTouchStart(e);
+          }}
           aria-label="Open modal"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-400">
@@ -755,7 +767,7 @@ export default function FractalesPage({ name }: Props) {
           position: 'fixed',
           top: 0,
           left: 0,
-          zIndex: 1, // Behind the modal
+          zIndex: 1, // Behind the modal and reopen button
           touchAction: 'none', // Prevent default touch behaviors
           WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
           pointerEvents: isModalVisible ? 'none' : 'auto', // Allow clicks through when modal is visible
@@ -767,6 +779,26 @@ export default function FractalesPage({ name }: Props) {
           setIframeLoadStatus('error')
         }}
       />
+      {/* Invisible overlay to capture clicks for reopen button when modal is closed */}
+      {!isModalVisible && (
+        <div
+          style={{
+            position: 'fixed',
+            top: `${reopenButtonPosition.y}px`,
+            left: `${reopenButtonPosition.x}px`,
+            width: '48px', // Approximate button size
+            height: '48px',
+            zIndex: 99, // Above iframe, below button
+            pointerEvents: 'auto',
+            cursor: 'pointer',
+          }}
+          onClick={handleReopenClick}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            handleReopenClick(e as any);
+          }}
+        />
+      )}
       {/* Error fallback */}
       {iframeError && (
         <div className="fixed inset-0 flex items-center justify-center bg-black text-white z-50">
