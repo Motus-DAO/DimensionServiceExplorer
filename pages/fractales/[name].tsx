@@ -647,8 +647,8 @@ export default function FractalesPage({ name }: Props) {
           ref={reopenButtonRef}
           onClick={handleReopenClick}
           className="fixed z-[100] bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg p-3 transition-all duration-200 shadow-lg backdrop-blur-sm"
-          style={{ pointerEvents: 'auto' }}
           style={{ 
+            pointerEvents: 'auto',
             cursor: isReopenDragging ? 'grabbing' : 'grab',
             left: `${reopenButtonPosition.x}px`,
             top: `${reopenButtonPosition.y}px`,
