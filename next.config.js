@@ -43,6 +43,16 @@ const nextConfig = {
       },
     ];
   },
+  // Redirect to Farcaster Hosted Manifest
+  async redirects() {
+    return [
+      {
+        source: '/.well-known/farcaster.json',
+        destination: 'https://api.farcaster.xyz/miniapps/hosted-manifest/019b011f-3012-76f7-512e-616e1b6128c0',
+        permanent: false, // 307 temporary redirect
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig
