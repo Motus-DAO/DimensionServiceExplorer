@@ -5,8 +5,6 @@ import { useFractalCapture } from '../../contexts/FractalCaptureContext'
 import { useFarcaster } from '../../contexts/FarcasterContext'
 import { HoloPanel, HoloButton, HoloText } from '../../components/ui/holo'
 import { ethers } from 'ethers'
-import path from 'path'
-import fs from 'fs'
 
 type Props = { name: string }
 const allowed = ['brainmelt','cosmic','entropy','glitchy','iterate','jazzdimension','matrixchat','neuroreality','planet','psyched','quantum','ripples','transform']
