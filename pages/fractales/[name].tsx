@@ -663,7 +663,7 @@ export default function FractalesPage({ name }: Props) {
             WebkitUserSelect: 'none',
             MozUserSelect: 'none',
             msUserSelect: 'none',
-            position: 'relative',
+            position: 'fixed',
             zIndex: 100,
           }}
           onMouseDown={handleReopenMouseDown}
