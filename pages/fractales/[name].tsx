@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useFractalCapture } from '../../contexts/FractalCaptureContext'
 import { useFarcaster } from '../../contexts/FarcasterContext'
@@ -171,6 +172,7 @@ window.addEventListener('message', function(e) {
 }
 
 export default function FractalesPage({ name, html }: Props) {
+  const router = useRouter()
   const { registerFrame, capture } = useFractalCapture()
   const { getWalletAddress, walletAddress, isConnected } = useFarcaster()
   const ref = useRef<HTMLIFrameElement>(null)
@@ -856,6 +858,18 @@ export default function FractalesPage({ name, html }: Props) {
               <HoloButton variant="secondary" onClick={onMint} disabled={busy}>Mint NFT</HoloButton>
               <HoloButton variant="secondary" onClick={onCaptureScreen} disabled={busy}>Capture Screen</HoloButton>
               {capturedUrl && <HoloButton variant="secondary" onClick={onClearCapture} disabled={busy}>Clear Screenshot</HoloButton>}
+            </div>
+            <div className="mt-3 flex items-center space-x-3">
+              <HoloButton 
+                variant="secondary" 
+                onClick={() => router.push('/fractales')}
+                className="flex items-center space-x-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="inline-block">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                <span>Go Back</span>
+              </HoloButton>
             </div>
             {capturedUrl && (
               <div className="mt-3">
