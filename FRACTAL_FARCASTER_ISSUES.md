@@ -98,14 +98,35 @@
 3. **Test with simplified HTML** to isolate issues
 4. **Gradually add complexity** to find breaking point
 
+## 📱 Mobile-Specific Issues (NEW)
+
+### Problem: Works on Desktop but Not Mobile
+
+**Common mobile issues:**
+1. **Viewport Height Problems**: `100vh` doesn't account for mobile browser UI (address bar, etc.)
+2. **Touch Events**: Mobile browsers handle touch differently in iframes
+3. **Performance**: Mobile devices struggle with complex animations
+4. **iOS Safari Restrictions**: Stricter iframe sandboxing on iOS
+5. **Fixed Positioning**: Iframe positioning can break on mobile
+
+### Mobile Fixes Applied:
+
+1. ✅ **Dynamic Viewport Height**: Use `100dvh` instead of `100vh` for mobile
+2. ✅ **Touch Action**: Added `touchAction: 'none'` to prevent default behaviors
+3. ✅ **Fixed Positioning**: Iframe uses `position: fixed` for better mobile support
+4. ✅ **Viewport Meta Tag**: Enhanced viewport meta with mobile-specific settings
+5. ✅ **Mobile CSS Injection**: Added mobile-specific CSS fixes to HTML content
+6. ✅ **Canvas Touch Fixes**: Prevented touch callouts and user selection
+
 ## 📋 Next Steps
 
 1. ✅ Add iframe sandbox permissions
 2. ✅ Add error handling and logging
 3. ✅ **Strip external fonts** - Code added to automatically remove Google Fonts imports
 4. ✅ **Test page created** - Visit `/fractales/test-simple` to diagnose issues
-5. ⚠️ Test in Farcaster to see if removing fonts fixes it
-6. ⚠️ If still broken, it's likely the raw HTML/iframe approach itself
+5. ✅ **Mobile fixes applied** - Dynamic viewport, touch handling, positioning
+6. ⚠️ Test on mobile Farcaster to verify fixes
+7. ⚠️ If still broken, may need to simplify animations for mobile performance
 
 ## 🧪 How to Test
 

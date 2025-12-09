@@ -47,6 +47,59 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
       return match
     }
   )
+  
+  // Mobile fixes: Ensure viewport meta tag is present and correct
+  if (!html.includes('viewport')) {
+    html = html.replace(
+      /<head>/i,
+      '<head><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">'
+    )
+  } else {
+    // Update existing viewport for mobile
+    html = html.replace(
+      /<meta\s+name=["']viewport["'][^>]*>/i,
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">'
+    )
+  }
+  
+  // Add mobile-specific CSS fixes
+  const mobileCSS = `
+    <style>
+      /* Mobile viewport fixes */
+      html, body {
+        height: 100%;
+        height: 100dvh; /* Dynamic viewport height for mobile */
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      /* Prevent iOS bounce scrolling */
+      body {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* Fix canvas sizing on mobile */
+      canvas {
+        touch-action: none;
+        display: block;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+      }
+    </style>
+  `
+  // Inject mobile CSS before closing head or after opening head
+  if (html.includes('</head>')) {
+    html = html.replace('</head>', mobileCSS + '</head>')
+  } else if (html.includes('<head>')) {
+    html = html.replace('<head>', '<head>' + mobileCSS)
+  } else {
+    html = mobileCSS + html
+  }
 const injection = `
 <script>
 window.addEventListener('message', function(e) {
@@ -787,7 +840,12 @@ export default function FractalesPage({ name, html }: Props) {
     setBusy(false)
   }
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-black" style={{ 
+      position: 'relative',
+      overflow: 'hidden',
+      touchAction: 'none', // Prevent page scrolling on mobile
+      WebkitOverflowScrolling: 'touch',
+    }}>
       {/* Reopen button - shown when modal is closed, draggable */}
       {!isModalVisible && (
         <button
@@ -891,9 +949,20 @@ export default function FractalesPage({ name, html }: Props) {
       <iframe 
         ref={ref} 
         srcDoc={html} 
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-        style={{ width: '100%', height: '100vh', border: 'none' }}
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
+        style={{ 
+          width: '100%', 
+          height: typeof window !== 'undefined' && 'visualViewport' in window ? '100dvh' : '100vh', // Use dynamic viewport height for mobile
+          border: 'none',
+          display: 'block',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          touchAction: 'none', // Prevent default touch behaviors
+          WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+        }}
         title={`Fractal: ${name}`}
+        allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
         onError={() => {
           setIframeError(true)
           setIframeLoadStatus('error')
